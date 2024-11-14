@@ -18,7 +18,6 @@ AOWCharacterPlayable::AOWCharacterPlayable()
 	SpringArmComponent->TargetArmLength = 400.0f;
 	SpringArmComponent->bUsePawnControlRotation = true;
 	SpringArmComponent->SocketOffset = FVector(0.f, 100.f, 50.f);
-	SpringArmComponent->bDoCollisionTest = false;
 
 	// Camera
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -100,6 +99,15 @@ void AOWCharacterPlayable::QuickMelee()
 	}
 }
 
+void AOWCharacterPlayable::SetIgnoreInput(bool bIgnore)
+{
+	if(Controller)
+	{
+		Controller->SetIgnoreMoveInput(bIgnore);
+		Controller->SetIgnoreLookInput(bIgnore);
+	}
+}
+
 void AOWCharacterPlayable::ApplyDamageSuccess(float Damage, bool bIsHeadShot)
 {
 	// ToDo : 궁극기 게이지 상승
@@ -178,6 +186,30 @@ void AOWCharacterPlayable::GetDirectionToCrosshair(const FVector& StartLocation,
 		FVector Direction = HitLocation - StartLocation;
 		Direction.Normalize();
 		OutDirection = Direction;
+	}
+}
+
+void AOWCharacterPlayable::TriggerAnimNotifyBegin()
+{
+	if(OnAnimNotifyBegin.IsBound())
+	{
+		OnAnimNotifyBegin.Broadcast();
+	}
+}
+
+void AOWCharacterPlayable::TriggerAnimNotifyEnd()
+{
+	if(OnAnimNotifyEnd.IsBound())
+	{
+		OnAnimNotifyEnd.Broadcast();
+	}
+}
+
+void AOWCharacterPlayable::TriggerAnimNotifyState(float DeltaTime)
+{
+	if(OnAnimNotifyState.IsBound())
+	{
+		OnAnimNotifyState.Broadcast(DeltaTime);
 	}
 }
 

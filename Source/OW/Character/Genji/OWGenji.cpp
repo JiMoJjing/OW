@@ -4,6 +4,7 @@
 #include "OWGenji.h"
 
 #include "Components/CapsuleComponent.h"
+#include "OW/Ability/Genji/GenjiSwiftStrikeComponent.h"
 
 AOWGenji::AOWGenji()
 {
@@ -18,14 +19,19 @@ AOWGenji::AOWGenji()
 	{
 		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
 	}
+
 	
 	GetCapsuleComponent()->SetCapsuleHalfHeight(90.f);
+	
 	GetCapsuleComponent()->SetCapsuleRadius(30.f);
-
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -88.f));
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
-
+	
 	JumpMaxCount = 2;
+
+
+	AbilityOneComponent = CreateDefaultSubobject<UGenjiSwiftStrikeComponent>(TEXT("SwiftStrikeComponent"));
+	AbilityComponents.Add(AbilityOneComponent->GetAbilityType(), AbilityOneComponent);
 }
 
 void AOWGenji::BeginPlay()

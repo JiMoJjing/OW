@@ -8,8 +8,11 @@
 #include "Components/ActorComponent.h"
 #include "AbilityComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityStateChanged, EAbiltiyState /* AbilityState */)
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityStateChanged, EAbilityState /* AbilityState */)
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityCooldownTimeChanged, float /* RemainingCooldownTime */)
+
+class AOWCharacterPlayable;
+class UAbilityManagerComponent;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class OW_API UAbilityComponent : public UActorComponent
@@ -22,66 +25,79 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-// Use Ability Section
+// Ability Function	
 public:
 	void UseAbility();
 
 protected:
 	bool CanUseAbility();
-
-	virtual void StartAbility();
-	virtual void EndAbility();
 	
-// Ability Type Section
-public:	
-	FORCEINLINE EAbilityType GetAbilityType() const { return AbilityType; }
+	virtual void AbilityStart();
+	virtual void AbilityEnd();
 
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_Type, meta = (AllowPrivateAccess = "true"))
-	EAbilityType AbilityType;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_Type, meta = (AllowPrivateAccess = "true", Bitmask, BitmaskEnum = EAbilityType))
-	uint8 CancelableAbilityTypes = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_Type, meta = (AllowPrivateAccess = "true", Bitmask, BitmaskEnum = EAbilityType))
-	uint8 UnavailableAbilityTypes = 0;
-
-public:
-	void OtherAbilityStarted(EAbilityType InAbilityType);
-	void OtherAbilityEnded(EAbilityType InAbilityType);
-
-// Ability State Section
-public:
-	FORCEINLINE EAbiltiyState GetAbilityState() const { return AbilityState; }
-	
-	void SetAbilityState(EAbiltiyState InAbilityState);
-
-	FOnAbilityStateChanged OnAbilityStateChanged;
-	
-protected:
-	UPROPERTY(BlueprintReadOnly, Category = Ability_State)
-	EAbiltiyState AbilityState;
 
 // Cooldown Section
-public:
-	FOnAbilityCooldownTimeChanged OnAbilityCooldownTimeChanged;
+	void CooldownStart();
+	void CooldownEnd();
+	void CooldownTick();
 	
-protected:
+	UPROPERTY()
+	FTimerHandle CooldownTimerHandle;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_Cooldown, meta = (AllowPrivateAccess = "true"))
 	float CooldownTime;
 
-	float RemainingCooldownTime;
-	
-	FTimerHandle CooldownTimerHandle;
+	UPROPERTY()
+	float CurrentCooldownTime;
 
-	void CooldownTimerStart();
-	void CooldownTimerEnd();
-	void CooldownTimerTick();
 	
-// Montage Section
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_Montage, meta = (AllowPrivateAccess = "true"))
+// AbilityType Section
+	UPROPERTY()
+	EAbilityType AbilityType;
+
+	UPROPERTY(meta = (Bitmask, BitmaskEnum = "/Script/OW.EAbilityType"))
+	uint8 MakeUnavailableAbilityType;
+
+public:
+	FORCEINLINE EAbilityType GetAbilityType() { return AbilityType; }
+
+	
+// AbilityState Section
+protected:
+	UPROPERTY()
+	EAbilityState AbilityState;
+	
+	void SetAbilityState(EAbilityState InAbilityState);
+
+
+// With AbilityManagerComponent Section
+protected:
+	void OtherAbilityStart(EAbilityType OtherAbilityType);
+	void OtherAbilityEnd(EAbilityType OtherAbilityType);
+
+	
+// Reference Caching Section
+protected:
+	UPROPERTY()
+	TObjectPtr<AOWCharacterPlayable> PlayableCharacter;
+
+	UPROPERTY()
+	TObjectPtr<UAbilityManagerComponent> AbilityManagerComponent;
+
+
+// Montage Section	
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_Montage, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> AbilityMontage;
 
 	void PlayAbilityMontage();
+	void PlayAbilityMontage_JumpToSection(FName InSectionName);
+	void StopAbilityMontage(float InBlendOutTime);
+
+	
+// 	Delegate Section
+public:
+	FOnAbilityCooldownTimeChanged OnAbilityCooldownTimeChanged;
+	FOnAbilityStateChanged OnAbilityStateChanged;
 };
 

@@ -7,9 +7,20 @@
 #include "Components/ActorComponent.h"
 #include "AbilityManagerComponent.generated.h"
 
+USTRUCT(BlueprintType)
+struct FAbilitySettings
+{
+	GENERATED_BODY()
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityStarted, EAbilityType/* AbilityType */);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityEnded, EAbilityType/* AbilityType */);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true, BitMask, BitMaskEnum = "/Script/OW.EAbilityType"))
+	uint8 CancellableAbilityTypes = 0;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true, BitMask, BitMaskEnum = "/Script/OW.EAbilityType"))
+	uint8 MakeUnavailableAbilityTypes = 0;
+};
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnOtherAbilityStart, EAbilityType/* AbilityType */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnOtherAbilityEnd, EAbilityType/* AbilityType */);
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -23,19 +34,39 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	
+// UseAbility Check
+public:
+	bool CanUseAbility(EAbilityType InAbilityType);
+	
+	void AbilityStart(EAbilityType InAbilityType);
+	void AbilityEnd(EAbilityType InAbilityType);
 
+	
 // AbilityType Section
 public:
 	FORCEINLINE EAbilityType GetCurrentAbilityType() const { return CurrentAbilityType; }
+	
 private:
 	EAbilityType CurrentAbilityType;
 
+
+// AbilitySettings
+public:
+	uint8 GetMakeUnavailableAbilityTypes(EAbilityType InAbilityType) { return AbilitySettings[InAbilityType].MakeUnavailableAbilityTypes; }
+	
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability_Settings", meta = (AllowPrivateAccess = "true"))
+	TMap<EAbilityType, FAbilitySettings> AbilitySettings;
+
+	
 // DELEGATE Section
 public:
-	FOnAbilityStarted OnAbilityStarted;
-	FOnAbilityEnded OnAbilityEnded;
+	FOnOtherAbilityStart OnOtherAbilityStart;
+	FOnOtherAbilityEnd OnOtherAbilityEnd;
 
-	void AbilityStarted(EAbilityType InAbilityType);
-	void AbilityEnded(EAbilityType InAbilityType);
+private:
+	void OtherAbilityStart(EAbilityType InAbilityType);
+	void OtherAbilityEnd(EAbilityType InAbilityType);
 	
 };

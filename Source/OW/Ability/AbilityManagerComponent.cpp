@@ -4,7 +4,7 @@
 #include "AbilityManagerComponent.h"
 
 
-UAbilityManagerComponent::UAbilityManagerComponent()
+UAbilityManagerComponent::UAbilityManagerComponent() : CurrentAbilityType(EAbilityType::EAT_None)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
@@ -16,25 +16,45 @@ void UAbilityManagerComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-void UAbilityManagerComponent::AbilityStarted(EAbilityType InAbilityType)
+bool UAbilityManagerComponent::CanUseAbility(EAbilityType InAbilityType)
 {
-	CurrentAbilityType = InAbilityType;
-	
-	if(OnAbilityStarted.IsBound())
+	if(CurrentAbilityType == EAbilityType::EAT_None)
 	{
-		OnAbilityStarted.Broadcast(InAbilityType);
+		return true;
 	}
+
+	bool bCanUseAbility = AbilitySettings[InAbilityType].CancellableAbilityTypes & static_cast<uint8>(CurrentAbilityType);
+	
+	return bCanUseAbility;
 }
 
-void UAbilityManagerComponent::AbilityEnded(EAbilityType InAbilityType)
+void UAbilityManagerComponent::AbilityStart(EAbilityType InAbilityType)
+{
+	CurrentAbilityType = InAbilityType;
+	OtherAbilityStart(CurrentAbilityType);
+}
+
+void UAbilityManagerComponent::AbilityEnd(EAbilityType InAbilityType)
 {
 	if(CurrentAbilityType == InAbilityType)
 	{
 		CurrentAbilityType = EAbilityType::EAT_None;
 	}
-	
-	if(OnAbilityEnded.IsBound())
+	OtherAbilityEnd(InAbilityType);
+}
+
+void UAbilityManagerComponent::OtherAbilityStart(EAbilityType InAbilityType)
+{
+	if(OnOtherAbilityStart.IsBound())
 	{
-		OnAbilityEnded.Broadcast(InAbilityType);
+		OnOtherAbilityStart.Broadcast(InAbilityType);
+	}
+}
+
+void UAbilityManagerComponent::OtherAbilityEnd(EAbilityType InAbilityType)
+{
+	if(OnOtherAbilityEnd.IsBound())
+	{
+		OnOtherAbilityEnd.Broadcast(InAbilityType);
 	}
 }
