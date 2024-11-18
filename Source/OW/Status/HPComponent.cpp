@@ -34,6 +34,11 @@ float UHPComponent::TakeDamage(float InDamage)
 	return ActualDamage;
 }
 
+void UHPComponent::InitializeWidget()
+{
+	SetCurrentHP(MaxHP);
+}
+
 bool UHPComponent::IsDead()
 {
 	return CurrentHP <= 0.0f;

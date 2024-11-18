@@ -4,13 +4,15 @@
 #include "GenjiSwiftStrikeComponent.h"
 
 #include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "OW/Character/OWCharacterPlayable.h"
 
 
 UGenjiSwiftStrikeComponent::UGenjiSwiftStrikeComponent() : SwiftStrikeDistance(1884.f), SwiftStrikeSpeed(5000.f), SwiftStrikeStartLocation(FVector::ZeroVector),
 SwiftStrikeEndLocation(FVector::ZeroVector), SwiftStrikeHitNormalProjection(FVector::ZeroVector), HitNormalProjectionInterpSpeed(10.f), CheckDoubleJump(false),
-CapsuleSize2D(0.f, 0.f)
+CapsuleSize2D(0.f, 0.f), SwiftStrikeDamage(50.f)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
@@ -22,6 +24,12 @@ CapsuleSize2D(0.f, 0.f)
 
 	CooldownTime = 8.f;
 	AbilityType = EAbilityType::EAT_AbilityOne;
+
+	SwiftStrikeCollider = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+	SwiftStrikeCollider->InitSphereRadius(90.f);
+	SwiftStrikeCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SwiftStrikeCollider->OnComponentBeginOverlap.AddDynamic(this, &UGenjiSwiftStrikeComponent::OnSwiftStrikeColliderBeginOverlap);
+	SwiftStrikeCollider->ComponentTags.Add(TEXT("TestTag"));
 }
 
 void UGenjiSwiftStrikeComponent::BeginPlay()
@@ -32,6 +40,8 @@ void UGenjiSwiftStrikeComponent::BeginPlay()
 
 	PlayableCharacter->GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &UGenjiSwiftStrikeComponent::OnCapsuleComponentHit);
 	PlayableCharacter->GetCharacterMovement()->MaxFlySpeed = SwiftStrikeSpeed;
+
+	SwiftStrikeCollider->AttachToComponent(PlayableCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 void UGenjiSwiftStrikeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -79,6 +89,8 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeStartSetting()
 	PlayableCharacter->GetCharacterMovement()->MaxAcceleration = 1000000.f;
 	PlayableCharacter->OnAnimNotifyState.AddUObject(this, &UGenjiSwiftStrikeComponent::SwiftStrikeUptade);
 	PlayableCharacter->OnAnimNotifyEnd.AddUObject(this, &UGenjiSwiftStrikeComponent::AbilityEnd);
+
+	SwiftStrikeCollider->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	
 	if(AbilityMontage)
 	{
@@ -97,6 +109,7 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeEndSetting()
 	// NotifyState DELEGATE Unbind
 	// Collider Collision off 
 	// Capsule Collision Response Change
+	
 
 	PlayableCharacter->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
 	PlayableCharacter->GetCharacterMovement()->MaxAcceleration = 2048.f;
@@ -105,6 +118,8 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeEndSetting()
 	PlayableCharacter->OnAnimNotifyState.RemoveAll(this);
 	PlayableCharacter->OnAnimNotifyEnd.RemoveAll(this);
 
+	SwiftStrikeCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
 	if(CheckDoubleJump)
 	{
 		PlayableCharacter->JumpCurrentCount = 2;
@@ -118,6 +133,8 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeEndSetting()
 
 	AbilityMontage->bEnableAutoBlendOut = true;
 	PlayAbilityMontage_JumpToSection(TEXT("Section_02"));
+
+	OverlappedActors.Empty();
 }
 
 void UGenjiSwiftStrikeComponent::SetSwiftStrikeStartLocation()
@@ -179,5 +196,24 @@ void UGenjiSwiftStrikeComponent::OnCapsuleComponentHit(UPrimitiveComponent* HitC
 		const FVector ActorForwardVector = PlayableCharacter->GetActorForwardVector();
 		// 평면 투영 벡터 공식을 사용한 방법 Vp = V - (V dot N) * N
 		SwiftStrikeHitNormalProjection = ActorForwardVector - FVector::DotProduct(ActorForwardVector, HitNormal) * HitNormal;
+	}
+}
+
+void UGenjiSwiftStrikeComponent::OnSwiftStrikeColliderBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	// 임시로 자신 무시
+	if(OtherActor == GetOwner())
+	{
+		return;
+	}
+
+	if(AActor* OverlappedActor = OtherComp->GetOwner())
+	{
+		if(OverlappedActors.Find(OverlappedActor) != INDEX_NONE)
+		{
+			return;
+		}
+		OverlappedActors.AddUnique(OverlappedActor);
+		UGameplayStatics::ApplyDamage(OverlappedActor, SwiftStrikeDamage, PlayableCharacter->GetController(), GetOwner(), UDamageType::StaticClass());
 	}
 }

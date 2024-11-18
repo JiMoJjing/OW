@@ -25,7 +25,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-// Ability Function	
+// Ability Function
 public:
 	void UseAbility();
 

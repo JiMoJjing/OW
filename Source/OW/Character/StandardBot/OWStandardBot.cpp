@@ -4,6 +4,7 @@
 #include "OWStandardBot.h"
 
 #include "Components/CapsuleComponent.h"
+#include "OW/Widget/WidgetComponent/HPBarWidgetComponent.h"
 
 
 AOWStandardBot::AOWStandardBot()
@@ -33,10 +34,33 @@ AOWStandardBot::AOWStandardBot()
 
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -110.f));
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
+
+	HPBarWidgetComponent = CreateDefaultSubobject<UHPBarWidgetComponent>(TEXT("HPBarWidgetComponent"));
+	HPBarWidgetComponent->SetupAttachment(RootComponent);
+	HPBarWidgetComponent->SetRelativeLocation(FVector(0.f, 0.f, 130.f));
+
+	ArmLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("ArmL"));
+	ArmRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("ArmR"));
+	LegCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Leg"));
+
+	CollisionArray.AddUnique(ArmLCollision);
+	CollisionArray.AddUnique(ArmRCollision);
+	CollisionArray.AddUnique(LegCollision);
+	
+	BodyCollision->SetupAttachment(GetMesh(), TEXT("Body"));
+	HeadCollision->SetupAttachment(GetMesh(), TEXT("Head"));
+	ArmLCollision->SetupAttachment(GetMesh(), TEXT("Arm_L"));
+	ArmRCollision->SetupAttachment(GetMesh(), TEXT("Arm_R"));
+	LegCollision->SetupAttachment(GetMesh(), TEXT("Leg"));
 }
 void AOWStandardBot::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if(HPBarWidgetComponent)
+	{
+		HPBarWidgetComponent->SetNameText(FText::FromName(TEXT("Standard Bot")));
+	}
 }
 
 void AOWStandardBot::CharacterDeath()

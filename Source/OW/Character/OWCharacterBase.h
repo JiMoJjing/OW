@@ -25,6 +25,7 @@ protected:
 
 public:
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	UHPComponent* GetHPComponent() { return HPComponent; }
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character_HP, meta = (AllowPrivateAccess = "true"))
@@ -39,4 +40,18 @@ protected:
 
 	UPROPERTY()
 	FRotator MeshRelativeRotation;
+
+
+// Collision Section
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCapsuleComponent> BodyCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCapsuleComponent> HeadCollision;
+
+	UPROPERTY()
+	TArray<TObjectPtr<UCapsuleComponent>> CollisionArray;
+
+	void SetCollisionEnabled(ECollisionEnabled::Type InType);
+	void SetCollisionProfileName(FName InCollisionProfileName);
 };

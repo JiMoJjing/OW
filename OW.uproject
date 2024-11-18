@@ -67,6 +67,14 @@
 				"IOS",
 				"TVOS"
 			]
+		},
+		{
+			"Name": "AutomationUtils",
+			"Enabled": false
+		},
+		{
+			"Name": "InterchangeTests",
+			"Enabled": false
 		}
 	]
 }

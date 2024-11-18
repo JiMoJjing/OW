@@ -55,6 +55,10 @@ protected:
 	virtual void Reload() override;
 	virtual void QuickMelee() override;
 
+public:
+	void SetIgnoreInput(bool bIgnore);
+	
+
 // AbilityComponent Section	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
@@ -87,7 +91,39 @@ protected:
 public:
 	FORCEINLINE UAbilityManagerComponent* GetAbilityManagerComponent() { return AbilityManagerComponent; }
 
-	void SetIgnoreInput(bool bIgnore);
+
+// Collision Section
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCapsuleComponent> UpperArmLCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCapsuleComponent> LowerArmLCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCapsuleComponent> UpperArmRCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCapsuleComponent> LowerArmRCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCapsuleComponent> ThighLCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCapsuleComponent> CalfLCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCapsuleComponent> FootLCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCapsuleComponent> ThighRCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCapsuleComponent> CalfRCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCapsuleComponent> FootRCollision;
+
 	
 // Controller Reference Caching
 protected:
@@ -105,12 +141,13 @@ public:
 	virtual void GetDirectionToCrosshair(const FVector& StartLocation, FVector& OutDirection, const ECollisionChannel InCollisionChannel) override;
 
 
-
-// AnimNotify
+// AnimNotify Trigger DELEGATE
 	FOnAnimNotifyBegin OnAnimNotifyBegin;
 	FOnAnimNotifyEnd OnAnimNotifyEnd;
 	FOnAnimNotifyState OnAnimNotifyState;
 
+
+// IOWTriggerAnimNotifyInterface
 	virtual void TriggerAnimNotifyBegin() override;
 	virtual void TriggerAnimNotifyEnd() override;
 	virtual void TriggerAnimNotifyState(float DeltaTime) override;

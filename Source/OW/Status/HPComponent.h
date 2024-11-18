@@ -19,25 +19,26 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-// Getter, Setter	
 public:
 	void SetMaxHP(float InMaxHP) { MaxHP = InMaxHP; }
 	FORCEINLINE float GetMaxHP() { return MaxHP;}
 
-// TakeDamage	
-	float TakeDamage(float InDamage);
-
-// Check Death
-	bool IsDead();
-	
-// DELEGATE
-	FOnHPChanged OnHPChanged;
 private:
 	void SetCurrentHP(float InHP);
 	
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = HPComponent, meta = (AllowPrivateAccess = "true"))
 	float MaxHP;
 
 	UPROPERTY()
 	float CurrentHP;
+
+public:
+	float TakeDamage(float InDamage);
+
+	void InitializeWidget();
+	
+	bool IsDead();
+	
+// DELEGATE
+	FOnHPChanged OnHPChanged;
 };

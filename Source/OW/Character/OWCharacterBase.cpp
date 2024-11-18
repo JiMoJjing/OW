@@ -37,6 +37,13 @@ AOWCharacterBase::AOWCharacterBase()
 
 	// HPComponent
 	HPComponent = CreateDefaultSubobject<UHPComponent>(TEXT("HPComponent"));
+
+	BodyCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Body"));
+	HeadCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Head"));
+	HeadCollision->ComponentTags.Add(TEXT("Head"));
+
+	CollisionArray.AddUnique(BodyCollision);
+	CollisionArray.AddUnique(HeadCollision);
 }
 
 void AOWCharacterBase::BeginPlay()
@@ -45,18 +52,19 @@ void AOWCharacterBase::BeginPlay()
 
 	MeshRelativeLocation = GetMesh()->GetRelativeLocation();
 	MeshRelativeRotation = GetMesh()->GetRelativeRotation();
+	GetMesh()->SetSimulatePhysics(false);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 float AOWCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	
 	bool bIsHeadShot = false;
 	if(DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 	{
 		const FPointDamageEvent* PointDamageEvent = static_cast<const FPointDamageEvent*>(&DamageEvent);
 		FName HitBoneName = PointDamageEvent->HitInfo.BoneName;
-		if(HitBoneName == FName(TEXT("head")) || HitBoneName == FName(TEXT("neck_01")))
+		if(HitBoneName == FName(TEXT("bone_0010")))
 		{
 			ActualDamage *= 2;
 			bIsHeadShot = true;
@@ -88,17 +96,38 @@ float AOWCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 void AOWCharacterBase::CharacterDeath()
 {
 	GetCapsuleComponent()->SetCollisionEnabled((ECollisionEnabled::NoCollision));
-	GetMesh()->SetCollisionProfileName(FName(TEXT("Ragdoll")));
+	
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 	GetMesh()->SetSimulatePhysics(true);
 	
+	SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AOWCharacterBase::CharacterRevive()
 {
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	
 	GetMesh()->SetSimulatePhysics(false);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-
-	GetMesh()->SetRelativeLocation(MeshRelativeLocation);
 	GetMesh()->SetRelativeRotation(MeshRelativeRotation);
+	GetMesh()->SetRelativeLocation(MeshRelativeLocation);
+	
+	SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
+
+void AOWCharacterBase::SetCollisionEnabled(ECollisionEnabled::Type InType)
+{ 
+	for(auto& Collision : CollisionArray)
+	{
+		Collision->SetCollisionEnabled(InType);
+	}
+}
+
+void AOWCharacterBase::SetCollisionProfileName(FName InCollisionProfileName)
+{
+	for(auto& Collision : CollisionArray)
+	{
+		Collision->SetCollisionProfileName(InCollisionProfileName);
+	}
 }

@@ -3,10 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/TimelineComponent.h"
 #include "OW/Ability/AbilityComponent.h"
 #include "GenjiSwiftStrikeComponent.generated.h"
 
+
+class USphereComponent;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class OW_API UGenjiSwiftStrikeComponent : public UAbilityComponent
@@ -55,4 +56,18 @@ private:
 	
 // CapsuleSize
 	FVector2D CapsuleSize2D;
+
+// Damage
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = SwiftStrike, meta = (AllowPrivateAccess = "true"))
+	float SwiftStrikeDamage;
+
+
+// Collider
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = SwiftStrike, meta = (AllowPrivateAccess = true))
+	TObjectPtr<USphereComponent> SwiftStrikeCollider;
+
+	UFUNCTION()
+	void OnSwiftStrikeColliderBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	TArray<TObjectPtr<AActor>> OverlappedActors; 
 };
