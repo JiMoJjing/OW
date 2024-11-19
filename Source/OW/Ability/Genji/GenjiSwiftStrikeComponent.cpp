@@ -3,11 +3,14 @@
 
 #include "GenjiSwiftStrikeComponent.h"
 
+#include "NiagaraFunctionLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "OW/Character/OWCharacterPlayable.h"
+
+#include "OW/Collision/OWCollisionProfile.h"
 
 
 UGenjiSwiftStrikeComponent::UGenjiSwiftStrikeComponent() : SwiftStrikeDistance(1884.f), SwiftStrikeSpeed(5000.f), SwiftStrikeStartLocation(FVector::ZeroVector),
@@ -22,14 +25,21 @@ CapsuleSize2D(0.f, 0.f), SwiftStrikeDamage(50.f)
 		AbilityMontage = SwiftStrikeMontageRef.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> SwiftStrikeHitEffectRef(TEXT("/Script/Niagara.NiagaraSystem'/Game/OW/Genji/Niagara/NS_Genji_SwiftstrikeHit.NS_Genji_SwiftstrikeHit'"));
+	if(SwiftStrikeHitEffectRef.Object)
+	{
+		SwiftStrikeHitEffect = SwiftStrikeHitEffectRef.Object;
+	}
+	
+
+	SwiftStrikeCollider = CreateDefaultSubobject<USphereComponent>(TEXT("SwiftStrikeCollider"));
+	SwiftStrikeCollider->OnComponentBeginOverlap.AddDynamic(this, &UGenjiSwiftStrikeComponent::OnSwiftStrikeColliderBeginOverlap);
+	SwiftStrikeCollider->InitSphereRadius(90.f);
+	SwiftStrikeCollider->SetCollisionProfileName(OWTEAM1OVERLAP);
+	SwiftStrikeCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	CooldownTime = 8.f;
 	AbilityType = EAbilityType::EAT_AbilityOne;
-
-	SwiftStrikeCollider = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
-	SwiftStrikeCollider->InitSphereRadius(90.f);
-	SwiftStrikeCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	SwiftStrikeCollider->OnComponentBeginOverlap.AddDynamic(this, &UGenjiSwiftStrikeComponent::OnSwiftStrikeColliderBeginOverlap);
-	SwiftStrikeCollider->ComponentTags.Add(TEXT("TestTag"));
 }
 
 void UGenjiSwiftStrikeComponent::BeginPlay()
@@ -41,7 +51,7 @@ void UGenjiSwiftStrikeComponent::BeginPlay()
 	PlayableCharacter->GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &UGenjiSwiftStrikeComponent::OnCapsuleComponentHit);
 	PlayableCharacter->GetCharacterMovement()->MaxFlySpeed = SwiftStrikeSpeed;
 
-	SwiftStrikeCollider->AttachToComponent(PlayableCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+	SwiftStrikeCollider->AttachToComponent(PlayableCharacter->GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 void UGenjiSwiftStrikeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -68,17 +78,7 @@ void UGenjiSwiftStrikeComponent::AbilityEnd()
 }
 
 void UGenjiSwiftStrikeComponent::SwiftStrikeStartSetting()
-{
-	// Set Start Location, End Location -
-	// Check DoubleJump -
-	// Set Ignore Input true -
-	// Set MovementMode Flying -
-	// Set MaxAcceleration 1000000.f -
-	// NotifyState DELEGATE Bind -
-	
-	// Capsule Collision Response Change
-	// Collider Collision On
-	
+{	
 	SetSwiftStrikeStartLocation();
 	SetSwiftStrikeEndLocation();
 
@@ -89,6 +89,7 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeStartSetting()
 	PlayableCharacter->GetCharacterMovement()->MaxAcceleration = 1000000.f;
 	PlayableCharacter->OnAnimNotifyState.AddUObject(this, &UGenjiSwiftStrikeComponent::SwiftStrikeUptade);
 	PlayableCharacter->OnAnimNotifyEnd.AddUObject(this, &UGenjiSwiftStrikeComponent::AbilityEnd);
+	PlayableCharacter->GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel3, ECR_Ignore);
 
 	SwiftStrikeCollider->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	
@@ -100,23 +101,13 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeStartSetting()
 
 void UGenjiSwiftStrikeComponent::SwiftStrikeEndSetting()
 {
-	// Set MovementMode Falling -
-	// Set MaxAcceleration 2048.f -
-	// StopMovementImmediately -
-	// Set Ignore Input false -
-	// Capsule Size RE -
-	// FVector Reset -
-	// NotifyState DELEGATE Unbind
-	// Collider Collision off 
-	// Capsule Collision Response Change
-	
-
 	PlayableCharacter->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
 	PlayableCharacter->GetCharacterMovement()->MaxAcceleration = 2048.f;
 	PlayableCharacter->GetCharacterMovement()->StopMovementImmediately();
 	PlayableCharacter->SetIgnoreInput(false);
 	PlayableCharacter->OnAnimNotifyState.RemoveAll(this);
 	PlayableCharacter->OnAnimNotifyEnd.RemoveAll(this);
+	PlayableCharacter->GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel3, ECR_Block);
 
 	SwiftStrikeCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
@@ -147,7 +138,7 @@ void UGenjiSwiftStrikeComponent::SetSwiftStrikeEndLocation()
 	FHitResult HitResult;
 	FVector TraceEndLocation;
 
-	bool bLineTrace = PlayableCharacter->TraceUnderCrosshair(SwiftStrikeDistance, HitResult, TraceEndLocation, ECC_Visibility);
+	bool bLineTrace = PlayableCharacter->TraceUnderCrosshair(SwiftStrikeDistance, HitResult, TraceEndLocation, ECC_Camera);
 	if(bLineTrace)
 	{
 		const FVector HitNormal = HitResult.Normal;
@@ -201,12 +192,6 @@ void UGenjiSwiftStrikeComponent::OnCapsuleComponentHit(UPrimitiveComponent* HitC
 
 void UGenjiSwiftStrikeComponent::OnSwiftStrikeColliderBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// 임시로 자신 무시
-	if(OtherActor == GetOwner())
-	{
-		return;
-	}
-
 	if(AActor* OverlappedActor = OtherComp->GetOwner())
 	{
 		if(OverlappedActors.Find(OverlappedActor) != INDEX_NONE)
@@ -215,5 +200,8 @@ void UGenjiSwiftStrikeComponent::OnSwiftStrikeColliderBeginOverlap(UPrimitiveCom
 		}
 		OverlappedActors.AddUnique(OverlappedActor);
 		UGameplayStatics::ApplyDamage(OverlappedActor, SwiftStrikeDamage, PlayableCharacter->GetController(), GetOwner(), UDamageType::StaticClass());
+
+		const FVector EffectLocation = OtherComp->GetComponentLocation();
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(OtherComp, SwiftStrikeHitEffect, EffectLocation, FRotator::ZeroRotator);
 	}
 }

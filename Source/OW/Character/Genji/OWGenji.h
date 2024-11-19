@@ -12,6 +12,8 @@ class OW_API AOWGenji : public AOWCharacterPlayable
 public:
 	AOWGenji();
 
+	virtual void PostInitializeComponents() override;
+
 protected:
 	virtual void BeginPlay() override;
 

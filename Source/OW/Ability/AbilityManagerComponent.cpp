@@ -43,6 +43,15 @@ void UAbilityManagerComponent::AbilityEnd(EAbilityType InAbilityType)
 	OtherAbilityEnd(InAbilityType);
 }
 
+uint8 UAbilityManagerComponent::GetMakeUnavailableAbilityTypes(EAbilityType InAbilityType)
+{
+	if(AbilitySettings.Contains(InAbilityType))
+	{
+		return AbilitySettings[InAbilityType].MakeUnavailableAbilityTypes;
+	}
+	return 0;
+}
+
 void UAbilityManagerComponent::OtherAbilityStart(EAbilityType InAbilityType)
 {
 	if(OnOtherAbilityStart.IsBound())

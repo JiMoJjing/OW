@@ -18,6 +18,7 @@ AOWCharacterBase::AOWCharacterBase()
 
 	// Capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	GetCapsuleComponent()->CanCharacterStepUpOn = ECB_Yes;
 
 	// Movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; 
@@ -33,7 +34,8 @@ AOWCharacterBase::AOWCharacterBase()
 	// Mesh
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -100.f), FRotator(0.f, -90.f, 0.f));
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	GetMesh()->CanCharacterStepUpOn = ECB_Yes;
+	GetMesh()->CanCharacterStepUpOn = ECB_No;
+	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 
 	// HPComponent
 	HPComponent = CreateDefaultSubobject<UHPComponent>(TEXT("HPComponent"));
@@ -41,9 +43,10 @@ AOWCharacterBase::AOWCharacterBase()
 	BodyCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Body"));
 	HeadCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Head"));
 	HeadCollision->ComponentTags.Add(TEXT("Head"));
-
+	
 	CollisionArray.AddUnique(BodyCollision);
 	CollisionArray.AddUnique(HeadCollision);
+
 }
 
 void AOWCharacterBase::BeginPlay()
@@ -108,12 +111,13 @@ void AOWCharacterBase::CharacterRevive()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	
 	GetMesh()->SetSimulatePhysics(false);
+	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	GetMesh()->SetRelativeRotation(MeshRelativeRotation);
 	GetMesh()->SetRelativeLocation(MeshRelativeLocation);
 	
-	SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 void AOWCharacterBase::SetCollisionEnabled(ECollisionEnabled::Type InType)

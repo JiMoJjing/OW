@@ -4,6 +4,7 @@
 #include "OWStandardBot.h"
 
 #include "Components/CapsuleComponent.h"
+#include "OW/Collision/OWCollisionProfile.h"
 #include "OW/Widget/WidgetComponent/HPBarWidgetComponent.h"
 
 
@@ -53,6 +54,15 @@ AOWStandardBot::AOWStandardBot()
 	ArmRCollision->SetupAttachment(GetMesh(), TEXT("Arm_R"));
 	LegCollision->SetupAttachment(GetMesh(), TEXT("Leg"));
 }
+
+void AOWStandardBot::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	GetCapsuleComponent()->SetCollisionProfileName(OWTEAM2CAPSULE);
+	SetCollisionProfileName(OWTEAM2MESH);
+}
+
 void AOWStandardBot::BeginPlay()
 {
 	Super::BeginPlay();

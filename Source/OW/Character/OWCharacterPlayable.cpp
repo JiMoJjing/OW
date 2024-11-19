@@ -29,39 +29,26 @@ AOWCharacterPlayable::AOWCharacterPlayable()
 	AbilityManagerComponent = CreateDefaultSubobject<UAbilityManagerComponent>(TEXT("AbilityManagerComponent"));
 
 	// Collision
-	BodyCollision->SetupAttachment(GetMesh(), TEXT("Body"));
-	HeadCollision->SetupAttachment(GetMesh(), TEXT("Head"));
-	
 	UpperArmLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("UpperArm_L"));
 	LowerArmLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LowerArm_L"));
-	UpperArmLCollision->SetupAttachment(GetMesh(), TEXT("UpperArm_L"));
-	LowerArmLCollision->SetupAttachment(GetMesh(), TEXT("LowerArm_L"));
 	CollisionArray.AddUnique(UpperArmLCollision);
 	CollisionArray.AddUnique(LowerArmLCollision);
-	
+
 	UpperArmRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("UpperArm_R"));
 	LowerArmRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LowerArm_R"));
-	UpperArmRCollision->SetupAttachment(GetMesh(),TEXT("UpperArm_R"));
-	LowerArmRCollision->SetupAttachment(GetMesh(), TEXT("LowerArm_R"));
 	CollisionArray.AddUnique(UpperArmRCollision);
 	CollisionArray.AddUnique(LowerArmRCollision);
-
+	
 	ThighLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Thigh_L"));
 	CalfLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Calf_L"));
 	FootLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Foot_L"));
-	ThighLCollision->SetupAttachment(GetMesh(), TEXT("Thigh_L"));
-	CalfLCollision->SetupAttachment(GetMesh(), TEXT("Calf_L"));
-	FootLCollision->SetupAttachment(GetMesh(), TEXT("Foot_L"));
 	CollisionArray.AddUnique(ThighLCollision);
 	CollisionArray.AddUnique(CalfLCollision);
 	CollisionArray.AddUnique(FootLCollision);
-	
+		
 	ThighRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Thigh_R"));
 	CalfRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Calf_R"));
 	FootRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Foot_R"));
-	ThighRCollision->SetupAttachment(GetMesh(), TEXT("Thigh_R"));
-	CalfRCollision->SetupAttachment(GetMesh(), TEXT("Calf_R"));
-	FootRCollision->SetupAttachment(GetMesh(), TEXT("Foot_R"));
 	CollisionArray.AddUnique(ThighRCollision);
 	CollisionArray.AddUnique(CalfRCollision);
 	CollisionArray.AddUnique(FootRCollision);

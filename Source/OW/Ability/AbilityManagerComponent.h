@@ -53,7 +53,7 @@ private:
 
 // AbilitySettings
 public:
-	uint8 GetMakeUnavailableAbilityTypes(EAbilityType InAbilityType) { return AbilitySettings[InAbilityType].MakeUnavailableAbilityTypes; }
+	uint8 GetMakeUnavailableAbilityTypes(EAbilityType InAbilityType);
 	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability_Settings", meta = (AllowPrivateAccess = "true"))

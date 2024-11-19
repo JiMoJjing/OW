@@ -5,6 +5,17 @@
 
 #include "OW/Interface/OWTriggerAnimNotifyInterface.h"
 
+void UANS_TriggerAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
+	float TotalDuration, const FAnimNotifyEventReference& EventReference)
+{
+	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
+
+	if(IOWTriggerAnimNotifyInterface* OWTriggerAnimNotifyInterface = Cast<IOWTriggerAnimNotifyInterface>(MeshComp->GetOwner()))
+	{
+		OWTriggerAnimNotifyInterface->TriggerAnimNotifyBegin();
+	}
+}
+
 void UANS_TriggerAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);

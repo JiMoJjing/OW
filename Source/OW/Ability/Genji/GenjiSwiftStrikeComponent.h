@@ -7,6 +7,7 @@
 #include "GenjiSwiftStrikeComponent.generated.h"
 
 
+class UNiagaraSystem;
 class USphereComponent;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -58,16 +59,20 @@ private:
 	FVector2D CapsuleSize2D;
 
 // Damage
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = SwiftStrike, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_SwiftStrike, meta = (AllowPrivateAccess = "true"))
 	float SwiftStrikeDamage;
 
 
 // Collider
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = SwiftStrike, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability_SwiftStrike, meta = (AllowPrivateAccess = true))
 	TObjectPtr<USphereComponent> SwiftStrikeCollider;
 
 	UFUNCTION()
 	void OnSwiftStrikeColliderBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	TArray<TObjectPtr<AActor>> OverlappedActors; 
+	TArray<TObjectPtr<AActor>> OverlappedActors;
+
+// Niagara
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability_SwiftStrike, meta = (AllowPrivateAccess = true))
+	TObjectPtr<UNiagaraSystem> SwiftStrikeHitEffect;
 };

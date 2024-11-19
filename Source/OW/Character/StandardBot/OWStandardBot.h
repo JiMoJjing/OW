@@ -17,6 +17,8 @@ class OW_API AOWStandardBot : public AOWCharacterBase
 public:
 	AOWStandardBot();
 
+	virtual void PostInitializeComponents() override;
+
 protected:
 	virtual void BeginPlay() override;
 
