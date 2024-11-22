@@ -11,7 +11,7 @@
 #include "OW/Interface/OWPlayerTraceInterface.h"
 #include "OWCharacterPlayable.generated.h"
 
-
+DECLARE_MULTICAST_DELEGATE(FOnAnimNotify);
 DECLARE_MULTICAST_DELEGATE(FOnAnimNotifyBegin);
 DECLARE_MULTICAST_DELEGATE(FOnAnimNotifyEnd);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnAnimNotifyState, float /* DeltaTime */);
@@ -142,12 +142,14 @@ public:
 
 
 // AnimNotify Trigger DELEGATE
+	FOnAnimNotify OnAnimNotify;
 	FOnAnimNotifyBegin OnAnimNotifyBegin;
 	FOnAnimNotifyEnd OnAnimNotifyEnd;
 	FOnAnimNotifyState OnAnimNotifyState;
 
 
 // IOWTriggerAnimNotifyInterface
+	virtual void TriggerAnimNotify() override;
 	virtual void TriggerAnimNotifyBegin() override;
 	virtual void TriggerAnimNotifyEnd() override;
 	virtual void TriggerAnimNotifyState(float DeltaTime) override;

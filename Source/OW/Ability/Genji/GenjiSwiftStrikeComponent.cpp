@@ -65,7 +65,7 @@ void UGenjiSwiftStrikeComponent::AbilityStart()
 
 	SwiftStrikeStartSetting();
 
-	PlayAbilityMontage();
+	PlayAbilityMontage(AbilityMontage);
 }
 
 void UGenjiSwiftStrikeComponent::AbilityEnd()
@@ -123,7 +123,7 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeEndSetting()
 	SwiftStrikeHitNormalProjection = FVector::ZeroVector;
 
 	AbilityMontage->bEnableAutoBlendOut = true;
-	PlayAbilityMontage_JumpToSection(TEXT("Section_02"));
+	PlayAbilityMontage_JumpToSection(AbilityMontage, TEXT("Section_02"));
 
 	OverlappedActors.Empty();
 }

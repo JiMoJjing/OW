@@ -21,6 +21,7 @@ class OW_API IOWTriggerAnimNotifyInterface
 	GENERATED_BODY()
 
 public:
+	virtual void TriggerAnimNotify() = 0;
 	virtual void TriggerAnimNotifyBegin() = 0;
 	virtual void TriggerAnimNotifyEnd() = 0;
 	virtual void TriggerAnimNotifyState(float Delta) = 0;

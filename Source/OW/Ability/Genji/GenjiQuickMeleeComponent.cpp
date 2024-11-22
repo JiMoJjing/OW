@@ -52,7 +52,8 @@ void UGenjiQuickMeleeComponent::AbilityStart()
 
 	OverlappedActors.Empty();
 
-	PlayAbilityMontage();
+	PlayAbilityMontage(AbilityMontage);
+	CooldownStart();
 }
 
 void UGenjiQuickMeleeComponent::AbilityEnd()
@@ -61,8 +62,6 @@ void UGenjiQuickMeleeComponent::AbilityEnd()
 
 	PlayableCharacter->OnAnimNotifyBegin.RemoveAll(this);
 	PlayableCharacter->OnAnimNotifyEnd.RemoveAll(this);
-
-	CooldownStart();
 }
 
 void UGenjiQuickMeleeComponent::QuickMeleeBegin()
@@ -75,6 +74,7 @@ void UGenjiQuickMeleeComponent::QuickMeleeEnd()
 	QuickMeleeCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	AbilityEnd();
 }
+
 
 void UGenjiQuickMeleeComponent::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {

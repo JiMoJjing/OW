@@ -38,7 +38,7 @@ protected:
 
 // Cooldown Section
 	void CooldownStart();
-	void CooldownEnd();
+	virtual void CooldownEnd();
 	void CooldownTick();
 	
 	UPROPERTY()
@@ -90,8 +90,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_Montage, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> AbilityMontage;
 
-	void PlayAbilityMontage();
-	void PlayAbilityMontage_JumpToSection(FName InSectionName);
+	void PlayAbilityMontage(UAnimMontage* InAbilityMontage);
+	void PlayAbilityMontage_JumpToSection(UAnimMontage* InAbilityMontage, FName InSectionName);
 	void StopAbilityMontage(float InBlendOutTime);
 
 	

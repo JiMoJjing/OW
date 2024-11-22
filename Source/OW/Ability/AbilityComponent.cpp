@@ -154,16 +154,20 @@ void UAbilityComponent::OtherAbilityEnd(EAbilityType OtherAbilityType)
 	}
 }
 
-void UAbilityComponent::PlayAbilityMontage()
+void UAbilityComponent::PlayAbilityMontage(UAnimMontage* InAbilityMontage)
 {
-	PlayableCharacter->GetMesh()->GetAnimInstance()->Montage_Play(AbilityMontage);
+	if(nullptr == InAbilityMontage) return;
+	
+	PlayableCharacter->GetMesh()->GetAnimInstance()->Montage_Play(InAbilityMontage);
 }
 
-void UAbilityComponent::PlayAbilityMontage_JumpToSection(FName InSectionName)
+void UAbilityComponent::PlayAbilityMontage_JumpToSection(UAnimMontage* InAbilityMontage, FName InSectionName)
 {
+	if(nullptr == InAbilityMontage) return;
+	
 	UAnimInstance* AnimInstance = PlayableCharacter->GetMesh()->GetAnimInstance();
-	AnimInstance->Montage_Play(AbilityMontage);
-	AnimInstance->Montage_JumpToSection(InSectionName, AbilityMontage);
+	AnimInstance->Montage_Play(InAbilityMontage);
+	AnimInstance->Montage_JumpToSection(InSectionName, InAbilityMontage);
 }
 
 void UAbilityComponent::StopAbilityMontage(float InBlendOutTime)

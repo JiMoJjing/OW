@@ -8,29 +8,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3aefe1f1-9d81-44f8-bffd-5d205ac350f6" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/OW/Ability/Genji/GenjiQuickMeleeComponent.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/Ability/Genji/GenjiQuickMeleeComponent.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/Animation/AnimNotify/AN_TriggerAnimNotifyBegin.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/Animation/AnimNotify/AN_TriggerAnimNotifyBegin.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/Animation/AnimNotify/AN_TriggerAnimNotifyEnd.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/Animation/AnimNotify/AN_TriggerAnimNotifyEnd.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/Collision/OWCollisionProfile.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/OW/Ability/Genji/GenjiShurikenComponent.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/OW/Ability/Genji/GenjiShurikenComponent.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/OW/Animation/AnimNotify/AN_TriggerAnimNotify.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/OW/Animation/AnimNotify/AN_TriggerAnimNotify.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/OW/Projectile/OWProjectileBase.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/OW/Projectile/OWProjectileBase.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/OW/Widget/UserWidget/OWHUD.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/OW/Widget/UserWidget/OWHUD.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.OW.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.OW.dir/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/OW.uproject" beforeDir="false" afterPath="$PROJECT_DIR$/OW.uproject" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/Ability/AbilityComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Ability/AbilityComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/Ability/AbilityComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Ability/AbilityComponent.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/OW/Ability/AbilityManagerComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Ability/AbilityManagerComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/OW/Ability/AbilityManagerComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Ability/AbilityManagerComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/Ability/Genji/GenjiQuickMeleeComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Ability/Genji/GenjiQuickMeleeComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/Ability/Genji/GenjiQuickMeleeComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Ability/Genji/GenjiQuickMeleeComponent.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/OW/Ability/Genji/GenjiSwiftStrikeComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Ability/Genji/GenjiSwiftStrikeComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/OW/Ability/Genji/GenjiSwiftStrikeComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Ability/Genji/GenjiSwiftStrikeComponent.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/OW/Animation/AnimNotify/ANS_TriggerAnimNotifyState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Animation/AnimNotify/ANS_TriggerAnimNotifyState.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/OW/Animation/AnimNotify/ANS_TriggerAnimNotifyState.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Animation/AnimNotify/ANS_TriggerAnimNotifyState.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/OW/Character/Genji/OWGenji.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Character/Genji/OWGenji.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/OW/Character/Genji/OWGenji.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Character/Genji/OWGenji.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/OW/Character/OWCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Character/OWCharacterBase.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/OW/Character/OWCharacterPlayable.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Character/OWCharacterPlayable.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/Character/OWCharacterPlayable.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Character/OWCharacterPlayable.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/OW/Character/StandardBot/OWStandardBot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Character/StandardBot/OWStandardBot.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/OW/Character/StandardBot/OWStandardBot.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Character/StandardBot/OWStandardBot.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/OW/OW.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/OW.Build.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/Interface/OWTriggerAnimNotifyInterface.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Interface/OWTriggerAnimNotifyInterface.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/Status/HPComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Status/HPComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/Status/HPComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Status/HPComponent.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +44,8 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock://C:/Users/USER/Desktop/UE5/OW/Source/OW/Ability/AbilityManagerComponent.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/USER/Desktop/UE5/OW/Source/OW/Ability/AbilityComponent.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/USER/Desktop/UE5/OW/Source/OW/Interface/OWTriggerAnimNotifyInterface.h" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -173,7 +177,10 @@
       <workItem from="1731736023002" duration="4918000" />
       <workItem from="1731913431865" duration="4608000" />
       <workItem from="1731924719792" duration="9391000" />
-      <workItem from="1732009562554" duration="14274000" />
+      <workItem from="1732009562554" duration="14547000" />
+      <workItem from="1732088965319" duration="12745000" />
+      <workItem from="1732175121573" duration="17183000" />
+      <workItem from="1732259308705" duration="5384000" />
     </task>
     <task id="LOCAL-00001" summary="- PlayerController&#10;OWPlayerController&#10;&#10;- Character&#10;OWCharacterBase&#10;OWCharacterPlayable&#10;OWGenji&#10;OWStandardBot&#10;&#10;- AnimInstance&#10;OWAnimInstance&#10;&#10;- Interface&#10;OWApplyDamageInterface&#10;OWCharacterInputInterface&#10;OWPlayerTraceInterface">
       <option name="closed" value="true" />
@@ -199,7 +206,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731937171272</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Feat : Collision Settings&#10;Object Channel 생성 ( Team1Capsule, Team1Mesh, Team2Capsule, Team2Mesh )&#10;Trace Channel 생성 ( Team1Trace, Team2Trace )&#10;CollisionProfile 생성 ( Team1CapsuleProfile, Team1MeshProfile, Team2CapsuleProfile, Team2MeshProfile,&#10;Team1OverlapProfile,&#10;Team1HitProfile,&#10;Team2OverlapProfile,&#10;Team2HitProfile )&#10;&#10;Feat : OWCollisionProfile.h&#10;위의 프로필을 #define 해둔 헤더 생성&#10;&#10;Refactor : Character&#10;PhysicsAsset을 대체할 Collision의SetupAttachment와 RelativeLocation, RelativeRotation 을 OWGenji의 생성자에서 하도록 수정&#10;&#10;Refactor : AbilityManagerComponent&#10;GetMakeUnavailableAbilityTypes 에 예외 처리 추가&#10;&#10;Refactor : ANS_TriggerAnimNotifyState&#10;NotifyBegin override 추가&#10;&#10;Feat : GenjiSwiftStrikeComponent&#10;히트 시 나이아가라 이펙트 생성 기능 추가&#10;&#10;Feat : AN_TriggerAnimNotifyBegin, AN_TriggerAnimNotifyEnd&#10;AnimNotifyBegin, End 호출용 애님 노티파이 추가&#10;&#10;Feat : GenjiQuickMeleeComponent&#10;겐지 근접공격 추가">
+      <option name="closed" value="true" />
+      <created>1732030181027</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1732030181027</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -223,6 +238,7 @@
     <MESSAGE value="- PlayerController&#10;OWPlayerController&#10;&#10;- Character&#10;OWCharacterBase&#10;OWCharacterPlayable&#10;OWGenji&#10;OWStandardBot&#10;&#10;- AnimInstance&#10;OWAnimInstance&#10;&#10;- Interface&#10;OWApplyDamageInterface&#10;OWCharacterInputInterface&#10;OWPlayerTraceInterface" />
     <MESSAGE value="&#10;Refactor : Ability&#10;기술 구현을 위한 액터 컴포넌트 리팩토링&#10;AbilityComponent, AbilityManagerComponent,&#10;OWCharacterPlayable, OWGenji&#10;&#10;Feat : SwiftStrike&#10;질풍참의 구현&#10;이를 위해 애님 노티파이 관련 기능 추가&#10;GenjiSwiftStrikeComponent 생성&#10;OWTriggerAnimNotifyInterface 생성&#10;OWCharacterPlayable 에 인터페이스 추가, 델리게이트 추가" />
     <MESSAGE value="Refactor : Character&#10;애셋의 스켈레톤 본 크기 이슈로 충돌 처리를 Physics Asset 활용에서 소켓에 CapsuleComponent를 붙여서 활용하는 방향으로 변경&#10;그에 따른 캐릭터에 Capsule Component 변수 생성 및 CDO, 콜리전 설정 용 함수 생성" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor : Character&#10;애셋의 스켈레톤 본 크기 이슈로 충돌 처리를 Physics Asset 활용에서 소켓에 CapsuleComponent를 붙여서 활용하는 방향으로 변경&#10;그에 따른 캐릭터에 Capsule Component 변수 생성 및 CDO, 콜리전 설정 용 함수 생성" />
+    <MESSAGE value="Feat : Collision Settings&#10;Object Channel 생성 ( Team1Capsule, Team1Mesh, Team2Capsule, Team2Mesh )&#10;Trace Channel 생성 ( Team1Trace, Team2Trace )&#10;CollisionProfile 생성 ( Team1CapsuleProfile, Team1MeshProfile, Team2CapsuleProfile, Team2MeshProfile,&#10;Team1OverlapProfile,&#10;Team1HitProfile,&#10;Team2OverlapProfile,&#10;Team2HitProfile )&#10;&#10;Feat : OWCollisionProfile.h&#10;위의 프로필을 #define 해둔 헤더 생성&#10;&#10;Refactor : Character&#10;PhysicsAsset을 대체할 Collision의SetupAttachment와 RelativeLocation, RelativeRotation 을 OWGenji의 생성자에서 하도록 수정&#10;&#10;Refactor : AbilityManagerComponent&#10;GetMakeUnavailableAbilityTypes 에 예외 처리 추가&#10;&#10;Refactor : ANS_TriggerAnimNotifyState&#10;NotifyBegin override 추가&#10;&#10;Feat : GenjiSwiftStrikeComponent&#10;히트 시 나이아가라 이펙트 생성 기능 추가&#10;&#10;Feat : AN_TriggerAnimNotifyBegin, AN_TriggerAnimNotifyEnd&#10;AnimNotifyBegin, End 호출용 애님 노티파이 추가&#10;&#10;Feat : GenjiQuickMeleeComponent&#10;겐지 근접공격 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="Feat : Collision Settings&#10;Object Channel 생성 ( Team1Capsule, Team1Mesh, Team2Capsule, Team2Mesh )&#10;Trace Channel 생성 ( Team1Trace, Team2Trace )&#10;CollisionProfile 생성 ( Team1CapsuleProfile, Team1MeshProfile, Team2CapsuleProfile, Team2MeshProfile,&#10;Team1OverlapProfile,&#10;Team1HitProfile,&#10;Team2OverlapProfile,&#10;Team2HitProfile )&#10;&#10;Feat : OWCollisionProfile.h&#10;위의 프로필을 #define 해둔 헤더 생성&#10;&#10;Refactor : Character&#10;PhysicsAsset을 대체할 Collision의SetupAttachment와 RelativeLocation, RelativeRotation 을 OWGenji의 생성자에서 하도록 수정&#10;&#10;Refactor : AbilityManagerComponent&#10;GetMakeUnavailableAbilityTypes 에 예외 처리 추가&#10;&#10;Refactor : ANS_TriggerAnimNotifyState&#10;NotifyBegin override 추가&#10;&#10;Feat : GenjiSwiftStrikeComponent&#10;히트 시 나이아가라 이펙트 생성 기능 추가&#10;&#10;Feat : AN_TriggerAnimNotifyBegin, AN_TriggerAnimNotifyEnd&#10;AnimNotifyBegin, End 호출용 애님 노티파이 추가&#10;&#10;Feat : GenjiQuickMeleeComponent&#10;겐지 근접공격 추가" />
   </component>
 </project>

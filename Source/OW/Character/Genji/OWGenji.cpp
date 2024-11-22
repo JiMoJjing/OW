@@ -5,6 +5,7 @@
 
 #include "Components/CapsuleComponent.h"
 #include "OW/Ability/Genji/GenjiQuickMeleeComponent.h"
+#include "OW/Ability/Genji/GenjiShurikenComponent.h"
 #include "OW/Ability/Genji/GenjiSwiftStrikeComponent.h"
 #include "OW/Collision/OWCollisionProfile.h"
 
@@ -23,10 +24,8 @@ AOWGenji::AOWGenji()
 	}
 
 	AbilityOneComponent = CreateDefaultSubobject<UGenjiSwiftStrikeComponent>(TEXT("SwiftStrikeComponent"));
-	AbilityComponents.Add(AbilityOneComponent->GetAbilityType(), AbilityOneComponent);
-
 	QuickMeleeComponent = CreateDefaultSubobject<UGenjiQuickMeleeComponent>(TEXT("QuickMeleeComponent"));
-	AbilityComponents.Add(QuickMeleeComponent->GetAbilityType(), QuickMeleeComponent);
+	PrimaryFireComponent = CreateDefaultSubobject<UGenjiShurikenComponent>(TEXT("ShurikenComponent"));
 
 	
 	GetCapsuleComponent()->SetCapsuleHalfHeight(90.f);
@@ -93,6 +92,20 @@ AOWGenji::AOWGenji()
 void AOWGenji::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	
+	AbilityComponents.Add(AbilityOneComponent->GetAbilityType(), AbilityOneComponent);
+	AbilityComponents.Add(QuickMeleeComponent->GetAbilityType(), QuickMeleeComponent);
+	AbilityComponents.Add(PrimaryFireComponent->GetAbilityType(), PrimaryFireComponent);
+
+	GenjiShurikenComponent = Cast<UGenjiShurikenComponent>(PrimaryFireComponent);
+}
+
+void AOWGenji::SecondaryFire()
+{
+	if(GenjiShurikenComponent)
+	{
+		GenjiShurikenComponent->UseSecondAbility();
+	}
 }
 
 void AOWGenji::BeginPlay()

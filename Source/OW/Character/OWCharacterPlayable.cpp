@@ -185,7 +185,7 @@ bool AOWCharacterPlayable::TraceUnderCrosshair(const float TraceDistance, FHitRe
 		{
 			OutHitLocation = OutHitResult.Location;
 #if WITH_EDITOR
-			UKismetSystemLibrary::DrawDebugLine(this, GetActorLocation(), OutHitLocation, FLinearColor::Yellow, 2.f, 1.f);
+			//UKismetSystemLibrary::DrawDebugLine(this, GetActorLocation(), OutHitLocation, FLinearColor::Yellow, 2.f, 1.f);
 #endif
 			return true;
 		}
@@ -212,6 +212,14 @@ void AOWCharacterPlayable::GetDirectionToCrosshair(const FVector& StartLocation,
 		FVector Direction = HitLocation - StartLocation;
 		Direction.Normalize();
 		OutDirection = Direction;
+	}
+}
+
+void AOWCharacterPlayable::TriggerAnimNotify()
+{
+	if(OnAnimNotify.IsBound())
+	{
+		OnAnimNotify.Broadcast();
 	}
 }
 

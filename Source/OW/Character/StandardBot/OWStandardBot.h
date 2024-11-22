@@ -25,10 +25,15 @@ protected:
 	virtual void CharacterDeath() override;
 	virtual void CharacterRevive() override;
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 // WidgetComponent
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = WidgetComponent, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UHPBarWidgetComponent> HPBarWidgetComponent;
+
+	void SetWidgetComponentVisibility(bool bNewVisibility);
 	
+// AnimMontage
 	UPROPERTY()
 	TObjectPtr<UAnimMontage> ReviveAnimMontage;
 

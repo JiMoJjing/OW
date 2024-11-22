@@ -18,6 +18,11 @@ void UAbilityManagerComponent::BeginPlay()
 
 bool UAbilityManagerComponent::CanUseAbility(EAbilityType InAbilityType)
 {
+	if(InAbilityType == EAbilityType::EAT_None)
+	{
+		return false;
+	}
+	
 	if(CurrentAbilityType == EAbilityType::EAT_None)
 	{
 		return true;

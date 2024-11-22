@@ -28,8 +28,8 @@ private:
 
 	void QuickMeleeBegin();
 	void QuickMeleeEnd();
-	
 
+	
 // Collider	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability_QuickMelee, meta = (AllowPrivateAccess = "true"))

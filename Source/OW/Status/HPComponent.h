@@ -38,6 +38,8 @@ public:
 	void InitializeWidget();
 	
 	bool IsDead();
+
+	void HPFullRecovery();
 	
 // DELEGATE
 	FOnHPChanged OnHPChanged;

@@ -44,6 +44,11 @@ bool UHPComponent::IsDead()
 	return CurrentHP <= 0.0f;
 }
 
+void UHPComponent::HPFullRecovery()
+{
+	SetCurrentHP(MaxHP);
+}
+
 void UHPComponent::SetCurrentHP(float InHP)
 {
 	CurrentHP = FMath::Clamp(InHP, 0.0f, MaxHP);

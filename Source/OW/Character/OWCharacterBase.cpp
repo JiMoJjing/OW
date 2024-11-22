@@ -66,8 +66,8 @@ float AOWCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	if(DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 	{
 		const FPointDamageEvent* PointDamageEvent = static_cast<const FPointDamageEvent*>(&DamageEvent);
-		FName HitBoneName = PointDamageEvent->HitInfo.BoneName;
-		if(HitBoneName == FName(TEXT("bone_0010")))
+		UPrimitiveComponent* HitComponent = PointDamageEvent->HitInfo.GetComponent();
+		if(HitComponent->ComponentHasTag(TEXT("Head")))
 		{
 			ActualDamage *= 2;
 			bIsHeadShot = true;
@@ -118,6 +118,8 @@ void AOWCharacterBase::CharacterRevive()
 	GetMesh()->SetRelativeLocation(MeshRelativeLocation);
 	
 	SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+	HPComponent->HPFullRecovery();
 }
 
 void AOWCharacterBase::SetCollisionEnabled(ECollisionEnabled::Type InType)

@@ -70,6 +70,7 @@ void AOWStandardBot::BeginPlay()
 	if(HPBarWidgetComponent)
 	{
 		HPBarWidgetComponent->SetNameText(FText::FromName(TEXT("Standard Bot")));
+		SetWidgetComponentVisibility(false);
 	}
 }
 
@@ -77,6 +78,8 @@ void AOWStandardBot::CharacterDeath()
 {
 	Super::CharacterDeath();
 
+	SetWidgetComponentVisibility(false);
+	
 	FTimerHandle ReviveTimerHandle;
 	GetWorldTimerManager().SetTimer(ReviveTimerHandle, this, &AOWStandardBot::CharacterRevive, 5.f, false);
 }
@@ -85,4 +88,15 @@ void AOWStandardBot::CharacterRevive()
 {
 	Super::CharacterRevive();
 	GetMesh()->GetAnimInstance()->Montage_Play(ReviveAnimMontage);
+}
+
+float AOWStandardBot::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,	AActor* DamageCauser)
+{
+	SetWidgetComponentVisibility(true);
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+}
+
+void AOWStandardBot::SetWidgetComponentVisibility(bool bNewVisibility)
+{
+	HPBarWidgetComponent->SetVisibility(bNewVisibility);
 }
