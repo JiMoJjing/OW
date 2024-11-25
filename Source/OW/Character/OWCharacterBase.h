@@ -6,11 +6,8 @@
 #include "GameFramework/Character.h"
 #include "OWCharacterBase.generated.h"
 
-/**
- * 
- */
-
 class UHPComponent;
+
 
 UCLASS()
 class OW_API AOWCharacterBase : public ACharacter

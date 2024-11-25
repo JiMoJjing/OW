@@ -34,7 +34,8 @@ void UOWAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	if(MovementComponent)
 	{
-		const FRotator ControlRotation = OwnerCharacter->GetControlRotation();
+		//const FRotator ControlRotation = OwnerCharacter->GetControlRotation();
+		const FRotator ActorRotation = OwnerCharacter->GetActorRotation();
 		
 		Velocity = MovementComponent->Velocity;
 		GroundSpeed = Velocity.Size2D();
@@ -48,7 +49,7 @@ void UOWAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		}
 		else
 		{
-			MoveDirection = UKismetAnimationLibrary::CalculateDirection(Velocity, ControlRotation);
+			MoveDirection = UKismetAnimationLibrary::CalculateDirection(Velocity, ActorRotation);
 		}
 	}
 }

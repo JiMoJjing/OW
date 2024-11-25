@@ -27,6 +27,9 @@ AOWGenji::AOWGenji()
 	QuickMeleeComponent = CreateDefaultSubobject<UGenjiQuickMeleeComponent>(TEXT("QuickMeleeComponent"));
 	PrimaryFireComponent = CreateDefaultSubobject<UGenjiShurikenComponent>(TEXT("ShurikenComponent"));
 
+	AbilityStateChangedDelegateWrappers.Add(AbilityOneComponent->GetAbilityType(), FOnAbilityStateChangedDelegateWrapper(AbilityOneComponent->OnAbilityStateChanged));
+	AbilityCooldownTimeChangedDelegateWrappers.Add(AbilityOneComponent->GetAbilityType(), FOnAbilityCooldownTimeChangedDelegateWrapper(AbilityOneComponent->OnAbilityCooldownTimeChanged));
+
 	
 	GetCapsuleComponent()->SetCapsuleHalfHeight(90.f);
 	
@@ -98,6 +101,7 @@ void AOWGenji::PostInitializeComponents()
 	AbilityComponents.Add(PrimaryFireComponent->GetAbilityType(), PrimaryFireComponent);
 
 	GenjiShurikenComponent = Cast<UGenjiShurikenComponent>(PrimaryFireComponent);
+	GenjiSwiftStrikeComponent = Cast<UGenjiSwiftStrikeComponent>(AbilityOneComponent);
 }
 
 void AOWGenji::SecondaryFire()
@@ -116,4 +120,5 @@ void AOWGenji::BeginPlay()
 void AOWGenji::KillSuccess()
 {
 	//ToDo : 질풍참 초기화
+	GenjiSwiftStrikeComponent->SwiftStrikeCooldownReset();
 }

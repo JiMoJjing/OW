@@ -9,6 +9,7 @@
 #include "GameFramework/Character.h"
 
 #include "OW/Interface/OWCharacterInputInterface.h"
+#include "OW/Widget/UserWidget/PlayerHUD/OWHUD.h"
 
 DEFINE_LOG_CATEGORY(Log_Input_Controller);
 
@@ -84,6 +85,12 @@ AOWPlayerController::AOWPlayerController()
 	{
 		QuickMeleeAction = QuickMeleeActionRef.Object;
 	}
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> OWHUDRef(TEXT("/Game/OW/Widget/PlayerHUD/WBP_OWHUD.WBP_OWHUD_C"));
+	if(OWHUDRef.Class)
+	{
+		OWHUDClass = OWHUDRef.Class;
+	}
 }
 
 void AOWPlayerController::BeginPlay()
@@ -98,6 +105,22 @@ void AOWPlayerController::BeginPlay()
 
 	FInputModeGameOnly GameOnlyInputMode;
 	SetInputMode(GameOnlyInputMode);
+
+	// HUD
+	if(OWHUDClass)
+	{
+		UUserWidget* HUDWidget = CreateWidget(this, OWHUDClass, TEXT("OWHUD"));
+
+		if(HUDWidget)
+		{
+			OWHUD = Cast<UOWHUD>(HUDWidget);
+		}
+	}
+	
+	if(OWHUD)
+	{
+		OWHUD->AddToViewport(0);
+	}
 }
 
 void AOWPlayerController::OnPossess(APawn* InPawn)
@@ -114,6 +137,11 @@ void AOWPlayerController::OnPossess(APawn* InPawn)
 	if(IOWApplyDamageInterface* ApplyDamageInterface = Cast<IOWApplyDamageInterface>(InPawn))
 	{
 		CharacterApplyDamageInterface = TScriptInterface<IOWApplyDamageInterface>(InPawn);
+	}
+
+	if(OWHUD)
+	{
+		OWHUD->BindCharacterDelegate();
 	}
 }
 
@@ -240,6 +268,7 @@ void AOWPlayerController::ApplyDamageSuccess(float Damage, bool bIsHeadShot)
 	{
 		CharacterApplyDamageInterface->ApplyDamageSuccess(Damage, bIsHeadShot);
 	}
+	OWHUD->CreateHitMarker(bIsHeadShot);
 }
 
 void AOWPlayerController::KillSuccess()

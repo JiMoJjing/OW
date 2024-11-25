@@ -4,6 +4,7 @@
 #include "OW/Character/OWCharacterPlayable.h"
 #include "OWGenji.generated.h"
 
+class UGenjiSwiftStrikeComponent;
 class UGenjiShurikenComponent;
 
 UCLASS()
@@ -27,4 +28,7 @@ public:
 private:
 	UPROPERTY()
 	TObjectPtr<UGenjiShurikenComponent> GenjiShurikenComponent;
+
+	UPROPERTY()
+	TObjectPtr<UGenjiSwiftStrikeComponent> GenjiSwiftStrikeComponent;
 };

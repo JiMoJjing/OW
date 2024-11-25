@@ -14,8 +14,8 @@
 
 
 UGenjiSwiftStrikeComponent::UGenjiSwiftStrikeComponent() : SwiftStrikeDistance(1884.f), SwiftStrikeSpeed(5000.f), SwiftStrikeStartLocation(FVector::ZeroVector),
-SwiftStrikeEndLocation(FVector::ZeroVector), SwiftStrikeHitNormalProjection(FVector::ZeroVector), HitNormalProjectionInterpSpeed(10.f), CheckDoubleJump(false),
-CapsuleSize2D(0.f, 0.f), SwiftStrikeDamage(50.f)
+SwiftStrikeEndLocation(FVector::ZeroVector), SwiftStrikeHitNormalProjection(FVector::ZeroVector), HitNormalProjectionInterpSpeed(10.f), bCheckDoubleJump(false),
+bSwiftStrikeCooldownReset(false), CapsuleSize2D(0.f, 0.f), SwiftStrikeDamage(50.f)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
@@ -73,7 +73,13 @@ void UGenjiSwiftStrikeComponent::AbilityEnd()
 	Super::AbilityEnd();
 
 	SwiftStrikeEndSetting();
-
+	
+	if(bSwiftStrikeCooldownReset)
+	{
+		bSwiftStrikeCooldownReset = false;
+		return;
+	}
+	
 	CooldownStart();
 }
 
@@ -82,7 +88,8 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeStartSetting()
 	SetSwiftStrikeStartLocation();
 	SetSwiftStrikeEndLocation();
 
-	CheckDoubleJump = PlayableCharacter->JumpCurrentCount == PlayableCharacter->JumpMaxCount;
+	bCheckDoubleJump = PlayableCharacter->JumpCurrentCount == PlayableCharacter->JumpMaxCount;
+	bSwiftStrikeCooldownReset = false;
 
 	PlayableCharacter->SetIgnoreInput(true);
 	PlayableCharacter->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
@@ -92,11 +99,12 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeStartSetting()
 	PlayableCharacter->GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel3, ECR_Ignore);
 
 	SwiftStrikeCollider->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	OverlappedActors.Empty();
 	
 	if(AbilityMontage)
 	{
 		AbilityMontage->bEnableAutoBlendOut = false;
-	}
+	}	
 }
 
 void UGenjiSwiftStrikeComponent::SwiftStrikeEndSetting()
@@ -111,12 +119,12 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeEndSetting()
 
 	SwiftStrikeCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
-	if(CheckDoubleJump)
+	if(bCheckDoubleJump)
 	{
 		PlayableCharacter->JumpCurrentCount = 2;
 	}
 
-	CheckDoubleJump = false;
+	bCheckDoubleJump = false;
 
 	SwiftStrikeStartLocation = FVector::ZeroVector;
 	SwiftStrikeEndLocation = FVector::ZeroVector;
@@ -124,8 +132,6 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeEndSetting()
 
 	AbilityMontage->bEnableAutoBlendOut = true;
 	PlayAbilityMontage_JumpToSection(AbilityMontage, TEXT("Section_02"));
-
-	OverlappedActors.Empty();
 }
 
 void UGenjiSwiftStrikeComponent::SetSwiftStrikeStartLocation()
@@ -188,6 +194,12 @@ void UGenjiSwiftStrikeComponent::OnCapsuleComponentHit(UPrimitiveComponent* HitC
 		// 평면 투영 벡터 공식을 사용한 방법 Vp = V - (V dot N) * N
 		SwiftStrikeHitNormalProjection = ActorForwardVector - FVector::DotProduct(ActorForwardVector, HitNormal) * HitNormal;
 	}
+}
+
+void UGenjiSwiftStrikeComponent::SwiftStrikeCooldownReset()
+{
+	bSwiftStrikeCooldownReset = true;
+	CooldownEnd();
 }
 
 void UGenjiSwiftStrikeComponent::OnSwiftStrikeColliderBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

@@ -8,6 +8,7 @@
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHPChanged, float /* MaxHP */, float /* CurrentHP */);
 
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class OW_API UHPComponent : public UActorComponent
 {

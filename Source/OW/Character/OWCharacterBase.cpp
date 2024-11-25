@@ -63,6 +63,7 @@ float AOWCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 {
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	bool bIsHeadShot = false;
+	
 	if(DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 	{
 		const FPointDamageEvent* PointDamageEvent = static_cast<const FPointDamageEvent*>(&DamageEvent);
@@ -81,7 +82,21 @@ float AOWCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		{
 			CharacterDeath();
 
-			// TO DO : Send GameModeBase CharacterDeath for KillLog
+			// AddImpulse
+			if(DamageCauser)
+			{
+				const FVector DamagedLocation = DamageCauser->GetActorLocation();
+				FVector ImpulseDirection = (GetActorLocation() - DamagedLocation).GetSafeNormal();
+				GetMesh()->AddImpulse(ImpulseDirection * 100000.f);
+			}
+
+			// Send KillSuccess to Instigator
+			if(IOWApplyDamageInterface* ApplyDamageInterface = Cast<IOWApplyDamageInterface>(EventInstigator))
+			{
+				ApplyDamageInterface->KillSuccess();
+			}
+			
+			// TODO : Send GameModeBase CharacterDeath for KillLog
 		}
 	}
 

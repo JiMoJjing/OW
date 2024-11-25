@@ -93,6 +93,7 @@ void UAbilityComponent::CooldownStart()
 	if(OnAbilityCooldownTimeChanged.IsBound())
 	{
 		CurrentCooldownTime = CooldownTime;
+		OnAbilityCooldownTimeChanged.Broadcast(CooldownTime, CurrentCooldownTime);
 		GetOwner()->GetWorldTimerManager().SetTimer(CooldownTimerHandle, this, &UAbilityComponent::CooldownTick, 0.1f, true, 0.1f);
 	}
 	else
@@ -114,7 +115,7 @@ void UAbilityComponent::CooldownEnd()
 void UAbilityComponent::CooldownTick()
 {
 	CurrentCooldownTime -= 0.1f;
-	OnAbilityCooldownTimeChanged.Broadcast(CurrentCooldownTime);
+	OnAbilityCooldownTimeChanged.Broadcast(CooldownTime, CurrentCooldownTime);
 
 	if(FMath::IsNearlyZero(CurrentCooldownTime, 0.01f) || CurrentCooldownTime <= 0.f)
 	{
@@ -173,4 +174,14 @@ void UAbilityComponent::PlayAbilityMontage_JumpToSection(UAnimMontage* InAbility
 void UAbilityComponent::StopAbilityMontage(float InBlendOutTime)
 {
 	PlayableCharacter->GetMesh()->GetAnimInstance()->Montage_Stop(InBlendOutTime, AbilityMontage);
+}
+
+void UAbilityComponent::InitializeWidget()
+{
+	SetAbilityState(AbilityState);
+
+	if(OnAbilityCooldownTimeChanged.IsBound())
+	{
+		OnAbilityCooldownTimeChanged.Broadcast(CooldownTime, CooldownTime);
+	}
 }

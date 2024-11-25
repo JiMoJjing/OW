@@ -25,9 +25,9 @@ void UHPBarWidgetComponent::BeginPlay()
 
 	UFloatingHPBarWidget* HPBarWidget = Cast<UFloatingHPBarWidget>(GetUserWidgetObject());
 	AOWCharacterBase* CharacterBase = Cast<AOWCharacterBase>(GetOwner());
-
+	
 	if(HPBarWidget && CharacterBase)
-	{
+	{		
 		UHPComponent* HPComponent = CharacterBase->GetHPComponent();
 		if(HPComponent)
 		{

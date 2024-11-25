@@ -8,11 +8,36 @@
 #include "Components/ActorComponent.h"
 #include "AbilityComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityStateChanged, EAbilityState /* AbilityState */)
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityCooldownTimeChanged, float /* RemainingCooldownTime */)
-
-class AOWCharacterPlayable;
 class UAbilityManagerComponent;
+class AOWCharacterPlayable;
+
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityStateChanged, EAbilityState /* AbilityState */)
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnAbilityCooldownTimeChanged, float /* CooldownTime */,float /* CurrentCooldownTime */)
+
+
+USTRUCT(BlueprintType)
+struct FOnAbilityStateChangedDelegateWrapper
+{
+	GENERATED_BODY()
+
+	FOnAbilityStateChangedDelegateWrapper() : OnAbilityStateChanged(nullptr) {}
+	FOnAbilityStateChangedDelegateWrapper(FOnAbilityStateChanged& InDelegate) : OnAbilityStateChanged(&InDelegate) {} 
+
+	FOnAbilityStateChanged* OnAbilityStateChanged;
+};
+
+USTRUCT(BlueprintType)
+struct FOnAbilityCooldownTimeChangedDelegateWrapper
+{
+	GENERATED_BODY()
+
+	FOnAbilityCooldownTimeChangedDelegateWrapper() : OnAbilityCooldownTimeChanged(nullptr) {}
+	FOnAbilityCooldownTimeChangedDelegateWrapper(FOnAbilityCooldownTimeChanged& InDelegate) : OnAbilityCooldownTimeChanged(&InDelegate) {} 
+
+	FOnAbilityCooldownTimeChanged* OnAbilityCooldownTimeChanged;
+};
+
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class OW_API UAbilityComponent : public UActorComponent
@@ -99,5 +124,8 @@ protected:
 public:
 	FOnAbilityCooldownTimeChanged OnAbilityCooldownTimeChanged;
 	FOnAbilityStateChanged OnAbilityStateChanged;
+
+// InitWidget
+	void InitializeWidget();
 };
 

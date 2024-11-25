@@ -41,7 +41,10 @@ private:
 	UFUNCTION()
 	void OnCapsuleComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
+public:
+	void SwiftStrikeCooldownReset(); 
 
+private:
 // SwiftStrike Variable Section	
 	float SwiftStrikeDistance;
 	float SwiftStrikeSpeed;
@@ -52,7 +55,9 @@ private:
 	FVector SwiftStrikeHitNormalProjection;
 	float HitNormalProjectionInterpSpeed;
 
-	uint8 CheckDoubleJump : 1;
+	uint8 bCheckDoubleJump : 1;
+
+	uint8 bSwiftStrikeCooldownReset : 1;
 
 	
 // CapsuleSize

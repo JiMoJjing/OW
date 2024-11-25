@@ -5,22 +5,23 @@
 #include "CoreMinimal.h"
 #include "OWCharacterBase.h"
 #include "OW/Ability/AbilityType.h"
+#include "OW/Ability/AbilityComponent.h"
 #include "OW/Interface/OWTriggerAnimNotifyInterface.h"
 #include "OW/Interface/OWApplyDamageInterface.h"
 #include "OW/Interface/OWCharacterInputInterface.h"
 #include "OW/Interface/OWPlayerTraceInterface.h"
 #include "OWCharacterPlayable.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnAnimNotify);
-DECLARE_MULTICAST_DELEGATE(FOnAnimNotifyBegin);
-DECLARE_MULTICAST_DELEGATE(FOnAnimNotifyEnd);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnAnimNotifyState, float /* DeltaTime */);
-
 
 class UAbilityManagerComponent;
 class UAbilityComponent;
 class UCameraComponent;
 class USpringArmComponent;
+
+DECLARE_MULTICAST_DELEGATE(FOnAnimNotify);
+DECLARE_MULTICAST_DELEGATE(FOnAnimNotifyBegin);
+DECLARE_MULTICAST_DELEGATE(FOnAnimNotifyEnd);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnAnimNotifyState, float /* DeltaTime */);
 
 /**
  * 
@@ -38,6 +39,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;
 
+	
 // View Section
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -46,7 +48,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> CameraComponent;
 
-// Input Section	
+	
+// Input Section
 	virtual void PrimaryFire() override;
 	virtual void SecondaryFire() override;
 	virtual void AbilityOne() override;
@@ -90,7 +93,7 @@ protected:
 
 public:
 	FORCEINLINE UAbilityManagerComponent* GetAbilityManagerComponent() { return AbilityManagerComponent; }
-
+	
 
 // Collision Section
 protected:
@@ -129,13 +132,30 @@ protected:
 protected:
 	UPROPERTY()
 	TObjectPtr<APlayerController> OwnerController;
-	
 
+
+// Ability Delegate Wrappers
+protected:
+	UPROPERTY()
+	TMap<EAbilityType, FOnAbilityStateChangedDelegateWrapper> AbilityStateChangedDelegateWrappers;
+
+	UPROPERTY()
+	TMap<EAbilityType, FOnAbilityCooldownTimeChangedDelegateWrapper> AbilityCooldownTimeChangedDelegateWrappers;
+
+public:
+	void AddAbilityStateChangedDelegate(const EAbilityType InAbilityType, const FOnAbilityStateChangedDelegateWrapper& InDelegateWrapper);
+	void AddAbilityCooldownTimeChangedDelegate(const EAbilityType InAbilityType, const FOnAbilityCooldownTimeChangedDelegateWrapper& InDelegateWrapper);
+
+	FOnAbilityStateChangedDelegateWrapper& GetAbilityStateChangedDelegateWrapper(EAbilityType InAbilityType) { return AbilityStateChangedDelegateWrappers[InAbilityType]; }
+	FOnAbilityCooldownTimeChangedDelegateWrapper& GetAbilityCooldownTimeChangedDelegateWrapper(EAbilityType InAbilityType) { return AbilityCooldownTimeChangedDelegateWrappers[InAbilityType]; }
+
+	
 // IOWApplyDamageInterface
 public:
 	virtual void ApplyDamageSuccess(float Damage, bool bIsHeadShot) override;
 	virtual void KillSuccess() override;
 
+	
 // IOWPlayerTraceInterface
 	virtual bool TraceUnderCrosshair(const float TraceDistance, FHitResult& OutHitResult, FVector& OutHitLocation, const ECollisionChannel InCollisionChannel) override;
 	virtual void GetDirectionToCrosshair(const FVector& StartLocation, FVector& OutDirection, const ECollisionChannel InCollisionChannel) override;
@@ -153,4 +173,8 @@ public:
 	virtual void TriggerAnimNotifyBegin() override;
 	virtual void TriggerAnimNotifyEnd() override;
 	virtual void TriggerAnimNotifyState(float DeltaTime) override;
+
+	
+// Widget
+	void InitializeWidget();
 };

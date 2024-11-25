@@ -12,6 +12,7 @@
  * 
  */
 
+class UOWHUD;
 class IOWCharacterInputInterface;
 class UInputMappingContext;
 class UInputAction;
@@ -91,8 +92,19 @@ protected:
 	UPROPERTY()
 	TScriptInterface<IOWApplyDamageInterface> HUDApplyDamageInterface;
 	
-// Interface - IOWApplyDamageInterface
+// IOWApplyDamageInterface
 public:
 	virtual void ApplyDamageSuccess(float Damage, bool bIsHeadShot) override;
 	virtual void KillSuccess() override;
+
+
+
+// HUD	
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = HUD, meta = (AllowPrivateAccess = "ture"))
+	TSubclassOf<UUserWidget> OWHUDClass;
+
+	UPROPERTY()
+	TObjectPtr<UOWHUD> OWHUD;
+
 };

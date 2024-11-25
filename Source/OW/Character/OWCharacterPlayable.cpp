@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "OW/Ability/AbilityComponent.h"
 #include "OW/Ability/AbilityManagerComponent.h"
+#include "OW/Status/HPComponent.h"
 
 AOWCharacterPlayable::AOWCharacterPlayable()
 {
@@ -134,6 +135,16 @@ void AOWCharacterPlayable::SetIgnoreInput(bool bIgnore)
 	}
 }
 
+void AOWCharacterPlayable::AddAbilityStateChangedDelegate(const EAbilityType InAbilityType, const FOnAbilityStateChangedDelegateWrapper& InDelegateWrapper)
+{
+	AbilityStateChangedDelegateWrappers.Emplace(InAbilityType, InDelegateWrapper);
+}
+
+void AOWCharacterPlayable::AddAbilityCooldownTimeChangedDelegate(const EAbilityType InAbilityType, const FOnAbilityCooldownTimeChangedDelegateWrapper& InDelegateWrapper)
+{
+	AbilityCooldownTimeChangedDelegateWrappers.Emplace(InAbilityType, InDelegateWrapper);
+}
+
 void AOWCharacterPlayable::ApplyDamageSuccess(float Damage, bool bIsHeadShot)
 {
 	// ToDo : 궁극기 게이지 상승
@@ -244,6 +255,16 @@ void AOWCharacterPlayable::TriggerAnimNotifyState(float DeltaTime)
 	if(OnAnimNotifyState.IsBound())
 	{
 		OnAnimNotifyState.Broadcast(DeltaTime);
+	}
+}
+
+void AOWCharacterPlayable::InitializeWidget()
+{
+	HPComponent->InitializeWidget();
+
+	for(auto Ability : AbilityComponents)
+	{
+		Ability.Value->InitializeWidget();
 	}
 }
 
