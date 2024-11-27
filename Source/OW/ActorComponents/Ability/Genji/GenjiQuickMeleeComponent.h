@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "OW/Ability/AbilityComponent.h"
+#include "OW/ActorComponents/Ability/AbilityComponent.h"
 #include "GenjiQuickMeleeComponent.generated.h"
 
 
@@ -18,6 +18,8 @@ class OW_API UGenjiQuickMeleeComponent : public UAbilityComponent
 public:
 	UGenjiQuickMeleeComponent();
 
+	virtual void InitializeComponent() override;
+	
 protected:
 	virtual void BeginPlay() override;
 

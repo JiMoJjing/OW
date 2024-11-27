@@ -6,8 +6,8 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "OW/Ability/AbilityComponent.h"
-#include "OW/Ability/AbilityManagerComponent.h"
+#include "OW/ActorComponents/Ability/AbilityComponent.h"
+#include "OW/ActorComponents/Ability/AbilityManagerComponent.h"
 #include "OW/Status/HPComponent.h"
 
 AOWCharacterPlayable::AOWCharacterPlayable()
@@ -25,9 +25,6 @@ AOWCharacterPlayable::AOWCharacterPlayable()
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
 	CameraComponent->bUsePawnControlRotation = false;
-
-	// AbilityComponent
-	AbilityManagerComponent = CreateDefaultSubobject<UAbilityManagerComponent>(TEXT("AbilityManagerComponent"));
 
 	// Collision
 	UpperArmLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("UpperArm_L"));
@@ -67,62 +64,6 @@ void AOWCharacterPlayable::PossessedBy(AController* NewController)
 	if(APlayerController* PlayerController = Cast<APlayerController>(NewController))
 	{
 		OwnerController = PlayerController;
-	}
-}
-
-void AOWCharacterPlayable::PrimaryFire()
-{
-	if(PrimaryFireComponent)
-	{
-		PrimaryFireComponent->UseAbility();
-	}
-}
-
-void AOWCharacterPlayable::SecondaryFire()
-{
-	if(SecondaryFireComponent)
-	{
-		SecondaryFireComponent->UseAbility();
-	}
-}
-
-void AOWCharacterPlayable::AbilityOne()
-{
-	if(AbilityOneComponent)
-	{
-		AbilityOneComponent->UseAbility();
-	}
-}
-
-void AOWCharacterPlayable::AbilityTwo()
-{
-	if(AbilityTwoComponent)
-	{
-		AbilityTwoComponent->UseAbility();
-	}
-}
-
-void AOWCharacterPlayable::AbilityThree()
-{
-	if(AbilityThreeComponent)
-	{
-		AbilityThreeComponent->UseAbility();
-	}
-}
-
-void AOWCharacterPlayable::Reload()
-{
-	if(ReloadComponent)
-	{
-		ReloadComponent->UseAbility();
-	}
-}
-
-void AOWCharacterPlayable::QuickMelee()
-{
-	if(QuickMeleeComponent)
-	{
-		QuickMeleeComponent->UseAbility();
 	}
 }
 
@@ -258,7 +199,7 @@ void AOWCharacterPlayable::TriggerAnimNotifyState(float DeltaTime)
 	}
 }
 
-void AOWCharacterPlayable::InitializeWidget()
+void AOWCharacterPlayable::InitWidget()
 {
 	HPComponent->InitializeWidget();
 

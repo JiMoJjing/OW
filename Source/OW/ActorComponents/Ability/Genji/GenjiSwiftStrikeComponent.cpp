@@ -42,16 +42,26 @@ bSwiftStrikeCooldownReset(false), CapsuleSize2D(0.f, 0.f), SwiftStrikeDamage(50.
 	AbilityType = EAbilityType::EAT_AbilityOne;
 }
 
+void UGenjiSwiftStrikeComponent::InitializeComponent()
+{
+	Super::InitializeComponent();
+
+	if(PlayableCharacter)
+	{
+		CapsuleSize2D = FVector2D(PlayableCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius(), PlayableCharacter->GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
+
+		PlayableCharacter->GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &UGenjiSwiftStrikeComponent::OnCapsuleComponentHit);
+		PlayableCharacter->GetCharacterMovement()->MaxFlySpeed = SwiftStrikeSpeed;
+	}
+	if(SwiftStrikeCollider)
+	{
+		SwiftStrikeCollider->AttachToComponent(PlayableCharacter->GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+	}
+}
+
 void UGenjiSwiftStrikeComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	CapsuleSize2D = FVector2D(PlayableCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius(), PlayableCharacter->GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
-
-	PlayableCharacter->GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &UGenjiSwiftStrikeComponent::OnCapsuleComponentHit);
-	PlayableCharacter->GetCharacterMovement()->MaxFlySpeed = SwiftStrikeSpeed;
-
-	SwiftStrikeCollider->AttachToComponent(PlayableCharacter->GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 void UGenjiSwiftStrikeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

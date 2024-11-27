@@ -4,20 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "OWCharacterBase.h"
-#include "OW/Ability/AbilityType.h"
-#include "OW/Ability/AbilityComponent.h"
+#include "OW/ActorComponents/Ability/AbilityType.h"
+#include "OW/ActorComponents/Ability/AbilityComponent.h"
 #include "OW/Interface/OWTriggerAnimNotifyInterface.h"
 #include "OW/Interface/OWApplyDamageInterface.h"
-#include "OW/Interface/OWCharacterInputInterface.h"
 #include "OW/Interface/OWPlayerTraceInterface.h"
 #include "OWCharacterPlayable.generated.h"
 
 
+class UBasicWeaponComponent;
 class UAbilityManagerComponent;
 class UAbilityComponent;
 class UCameraComponent;
 class USpringArmComponent;
-
+ 
 DECLARE_MULTICAST_DELEGATE(FOnAnimNotify);
 DECLARE_MULTICAST_DELEGATE(FOnAnimNotifyBegin);
 DECLARE_MULTICAST_DELEGATE(FOnAnimNotifyEnd);
@@ -27,7 +27,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnAnimNotifyState, float /* DeltaTime */);
  * 
  */
 UCLASS()
-class OW_API AOWCharacterPlayable : public AOWCharacterBase, public IOWCharacterInputInterface, public IOWApplyDamageInterface, public IOWPlayerTraceInterface
+class OW_API AOWCharacterPlayable : public AOWCharacterBase, public IOWApplyDamageInterface, public IOWPlayerTraceInterface
 	, public IOWTriggerAnimNotifyInterface
 {
 	GENERATED_BODY()
@@ -50,14 +50,6 @@ protected:
 
 	
 // Input Section
-	virtual void PrimaryFire() override;
-	virtual void SecondaryFire() override;
-	virtual void AbilityOne() override;
-	virtual void AbilityTwo() override;
-	virtual void AbilityThree() override;
-	virtual void Reload() override;
-	virtual void QuickMelee() override;
-
 public:
 	void SetIgnoreInput(bool bIgnore);
 	
@@ -65,36 +57,16 @@ public:
 // AbilityComponent Section	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAbilityManagerComponent> AbilityManagerComponent;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAbilityComponent> PrimaryFireComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAbilityComponent> SecondaryFireComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAbilityComponent> AbilityOneComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAbilityComponent> AbilityTwoComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAbilityComponent> AbilityThreeComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAbilityComponent> ReloadComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAbilityComponent> QuickMeleeComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
 	TMap<EAbilityType, TObjectPtr<UAbilityComponent>> AbilityComponents;
 
-public:
-	FORCEINLINE UAbilityManagerComponent* GetAbilityManagerComponent() { return AbilityManagerComponent; }
-	
+// BasicWeaponComponent Section
+	UPROPERTY()
+	TObjectPtr<UBasicWeaponComponent> BasicWeaponComponent;
 
+public:
+	UBasicWeaponComponent* GetBasicWeaponComponent() { return BasicWeaponComponent; }
+
+	
 // Collision Section
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
@@ -176,5 +148,5 @@ public:
 
 	
 // Widget
-	void InitializeWidget();
+	virtual void InitWidget();
 };

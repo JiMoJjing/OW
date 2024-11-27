@@ -26,11 +26,13 @@ AOWProjectileBase::AOWProjectileBase() : ProjectileLifeSpan(5.f), ProjectileDama
 	{
 		HitSphereComponent->OnComponentHit.AddDynamic(this, &AOWProjectileBase::OnSphereHit);
 		HitSphereComponent->SetCollisionProfileName(OWTEAM1HIT);
+		HitSphereComponent->CanCharacterStepUpOn = ECB_No;
 	}
 
 	if(StaticMeshComponent)
 	{
 		StaticMeshComponent->SetCollisionProfileName(TEXT("NoCollision"));
+		StaticMeshComponent->CanCharacterStepUpOn = ECB_No;
 	}
 
 	if(NiagaraComponent)

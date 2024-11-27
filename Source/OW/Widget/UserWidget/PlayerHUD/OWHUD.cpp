@@ -4,8 +4,9 @@
 #include "OWHUD.h"
 
 #include "AbilityWidget.h"
+#include "AmmoWidget.h"
 #include "PlayerHPBarWidget.h"
-#include "OW/Ability/AbilityComponent.h"
+#include "OW/ActorComponents/BasicAttack/BasicWeaponComponent.h"
 #include "OW/Character/OWCharacterPlayable.h"
 #include "OW/Status/HPComponent.h"
 
@@ -30,6 +31,7 @@ void UOWHUD::NativeConstruct()
 	Super::NativeConstruct();
 
 	AbilityWidgets.Add(AbilityOneWidget->GetAbilityType(), AbilityOneWidget);
+
 	BindCharacterDelegate();
 }
 
@@ -46,10 +48,16 @@ void UOWHUD::BindCharacterDelegate()
 	}
 	
 	// AbilityComponent Bind
-	CharacterPlayable->GetAbilityStateChangedDelegateWrapper(AbilityOneWidget->GetAbilityType()).OnAbilityStateChanged->AddUObject(AbilityOneWidget, &UAbilityWidget::AbilityStateChanged);
-	CharacterPlayable->GetAbilityCooldownTimeChangedDelegateWrapper(AbilityOneWidget->GetAbilityType()).OnAbilityCooldownTimeChanged->AddUObject(AbilityOneWidget, &UAbilityWidget::CooldownTimeChanged);
+	// CharacterPlayable->GetAbilityStateChangedDelegateWrapper(AbilityOneWidget->GetAbilityType()).OnAbilityStateChanged->AddUObject(AbilityOneWidget, &UAbilityWidget::AbilityStateChanged);
+	// CharacterPlayable->GetAbilityCooldownTimeChangedDelegateWrapper(AbilityOneWidget->GetAbilityType()).OnAbilityCooldownTimeChanged->AddUObject(AbilityOneWidget, &UAbilityWidget::CooldownTimeChanged);
+
+	// Ammo Bind
+	if(UBasicWeaponComponent* BasicWeaponComponent = CharacterPlayable->GetBasicWeaponComponent())
+	{
+		BasicWeaponComponent->OnAmmoChanged.AddUObject(this, &UOWHUD::AmmoWidgetUpdate);
+	}
 	
-	CharacterPlayable->InitializeWidget();
+	CharacterPlayable->InitWidget();
 }
 
 void UOWHUD::PlayerHPBarUpdate(float InMaxHP, float InCurrentHP)
@@ -79,4 +87,9 @@ void UOWHUD::CreateHitMarker(bool bIsHeadShot)
 			HitMarker->AddToViewport();
 		}
 	}
+}
+
+void UOWHUD::AmmoWidgetUpdate(uint8 InMaxAmmo, uint8 InCurrentAmmo)
+{
+	AmmoWidget->AmmoChanged(InMaxAmmo, InCurrentAmmo);
 }

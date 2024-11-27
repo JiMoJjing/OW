@@ -5,10 +5,11 @@
 
 #include "Components/CapsuleComponent.h"
 #include "OW/Collision/OWCollisionProfile.h"
+#include "OW/Projectile/OWProjectileBase.h"
 #include "OW/Widget/WidgetComponent/HPBarWidgetComponent.h"
 
 
-AOWStandardBot::AOWStandardBot()
+AOWStandardBot::AOWStandardBot() : PoolSize(20), PoolIndex(0)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	
@@ -53,6 +54,24 @@ AOWStandardBot::AOWStandardBot()
 	ArmLCollision->SetupAttachment(GetMesh(), TEXT("Arm_L"));
 	ArmRCollision->SetupAttachment(GetMesh(), TEXT("Arm_R"));
 	LegCollision->SetupAttachment(GetMesh(), TEXT("Leg"));
+
+	static ConstructorHelpers::FClassFinder<AOWProjectileBase> StandardBotProjectileClassRef(TEXT("/Game/OW/StandardBot/Blueprint/BP_StandardBot_Projectile.BP_StandardBot_Projectile_C"));
+	if(StandardBotProjectileClassRef.Class)
+	{
+		StandardBotProjectileClass = StandardBotProjectileClassRef.Class;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> StandardBotFireMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/OW/StandardBot/AnimMontage/AM_StandardBot_Fire.AM_StandardBot_Fire'"));
+	if(StandardBotFireMontageRef.Object)
+	{
+		StandardBotFireMontage = StandardBotFireMontageRef.Object;
+	}
+
+	LeftMuzzle = CreateDefaultSubobject<USceneComponent>(TEXT("LeftMuzzle"));
+	RightMuzzle = CreateDefaultSubobject<USceneComponent>(TEXT("RightMuzzle"));
+	LeftMuzzle->SetupAttachment(GetMesh(), TEXT("bone_08B2"));
+	RightMuzzle->SetupAttachment(GetMesh(), TEXT("bone_08B3"));
+
 }
 
 void AOWStandardBot::PostInitializeComponents()
@@ -71,6 +90,16 @@ void AOWStandardBot::BeginPlay()
 	{
 		HPBarWidgetComponent->SetNameText(FText::FromName(TEXT("Standard Bot")));
 		SetWidgetComponentVisibility(false);
+	}
+	if(StandardBotProjectileClass)
+	{
+		FillProjectilePool();
+	}
+
+	if(StandardBotFireMontage)
+	{
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(TimerHandle, this, &AOWStandardBot::PlayFireMontage, 4.f, true, 2.f);
 	}
 }
 
@@ -99,4 +128,77 @@ float AOWStandardBot::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 void AOWStandardBot::SetWidgetComponentVisibility(bool bNewVisibility)
 {
 	HPBarWidgetComponent->SetVisibility(bNewVisibility);
+}
+
+void AOWStandardBot::FillProjectilePool()
+{
+	UWorld* World = GetWorld();
+	if(nullptr == World) return;
+
+	FActorSpawnParameters ActorSpawnParameters;
+	ActorSpawnParameters.Owner = this;
+	ActorSpawnParameters.Instigator = this;
+	const FVector SpawnLocation = FVector::ZeroVector;
+	const FRotator SpawnRotation = FRotator::ZeroRotator;
+	
+	for(int index = 0; index < PoolSize; index++)
+	{
+		if(AOWProjectileBase* ProjectileBase = World->SpawnActor<AOWProjectileBase>(StandardBotProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParameters))
+		{
+			ProjectilePool.Add(ProjectileBase);
+		}
+	}
+}
+
+TObjectPtr<AOWProjectileBase> AOWStandardBot::GetProjectileFromPool()
+{
+	if(ProjectilePool.IsEmpty())
+	{
+		return nullptr;
+	}
+	
+	PoolIndex %= PoolSize;
+	AOWProjectileBase* ProjectileBase = ProjectilePool[PoolIndex++];
+	
+	return ProjectileBase;
+}
+
+void AOWStandardBot::PlayFireMontage()
+{
+	GetMesh()->GetAnimInstance()->Montage_Play(StandardBotFireMontage);
+}
+
+void AOWStandardBot::StandardBotFire()
+{
+	FVector ShotDirection = GetActorForwardVector();
+	AOWProjectileBase* Projectile = GetProjectileFromPool();
+
+	if(Projectile)
+	{
+		if(PoolIndex % 2 == 1)
+		{
+			Projectile->ActivateProjectile(LeftMuzzle->GetComponentLocation(), ShotDirection);
+		}
+		else
+		{
+			Projectile->ActivateProjectile(RightMuzzle->GetComponentLocation(), ShotDirection);
+		}
+	}
+}
+
+void AOWStandardBot::TriggerAnimNotify()
+{
+	StandardBotFire();
+}
+
+void AOWStandardBot::TriggerAnimNotifyBegin()
+{
+}
+
+void AOWStandardBot::TriggerAnimNotifyEnd()
+{
+}
+
+void AOWStandardBot::TriggerAnimNotifyState(float Delta)
+{
 }

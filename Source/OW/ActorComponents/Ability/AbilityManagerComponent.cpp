@@ -7,8 +7,6 @@
 UAbilityManagerComponent::UAbilityManagerComponent() : CurrentAbilityType(EAbilityType::EAT_None)
 {
 	PrimaryComponentTick.bCanEverTick = true;
-
-	CurrentAbilityType = EAbilityType::EAT_None;
 }
 
 void UAbilityManagerComponent::BeginPlay()

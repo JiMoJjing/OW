@@ -17,6 +17,8 @@ class OW_API AOWCharacterBase : public ACharacter
 public:
 	AOWCharacterBase();
 
+	virtual void PostInitializeComponents() override;
+
 protected:
 	virtual void BeginPlay() override;
 

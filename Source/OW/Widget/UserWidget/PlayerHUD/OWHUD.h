@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "OW/Ability/AbilityType.h"
+#include "OW/ActorComponents/Ability/AbilityType.h"
 #include "OWHUD.generated.h"
 
 
+class UAmmoWidget;
 class UAbilityWidget;
 class UPlayerHPBarWidget;
 
@@ -17,6 +18,7 @@ class OW_API UOWHUD : public UUserWidget
 	GENERATED_BODY()
 
 	UOWHUD(const FObjectInitializer& ObjectInitializer);
+
 
 protected:
 	virtual void NativeConstruct() override;
@@ -64,4 +66,11 @@ private:
 
 	UPROPERTY()
 	TMap<EAbilityType, TObjectPtr<UAbilityWidget>> AbilityWidgets;
+
+	
+// Ammo Widget
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", BindWidget))
+	TObjectPtr<UAmmoWidget> AmmoWidget;
+
+	void AmmoWidgetUpdate(uint8 InMaxAmmo, uint8 InCurrentAmmo);
 };

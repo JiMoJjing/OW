@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "OW/Ability/AbilityState.h"
-#include "OW/Ability/AbilityType.h"
+#include "OW/ActorComponents/Ability/AbilityState.h"
+#include "OW/ActorComponents/Ability/AbilityType.h"
 #include "AbilityWidget.generated.h"
 
 class UImage;

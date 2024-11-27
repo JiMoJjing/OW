@@ -6,7 +6,7 @@
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
-#include "OW/Ability/AbilityState.h"
+#include "OW/ActorComponents/Ability/AbilityState.h"
 
 void UAbilityWidget::NativeConstruct()
 {

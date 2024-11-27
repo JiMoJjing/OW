@@ -49,14 +49,22 @@ AOWCharacterBase::AOWCharacterBase()
 
 }
 
+void AOWCharacterBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if(USkeletalMeshComponent* SkeletalMeshComponent = GetMesh())
+	{
+		MeshRelativeLocation = SkeletalMeshComponent->GetRelativeLocation();
+        MeshRelativeRotation = SkeletalMeshComponent->GetRelativeRotation();
+       	SkeletalMeshComponent->SetSimulatePhysics(false);
+       	SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+
 void AOWCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	MeshRelativeLocation = GetMesh()->GetRelativeLocation();
-	MeshRelativeRotation = GetMesh()->GetRelativeRotation();
-	GetMesh()->SetSimulatePhysics(false);
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 float AOWCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

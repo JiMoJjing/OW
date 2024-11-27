@@ -3,7 +3,7 @@
 
 #include "AbilityComponent.h"
 
-#include "OW/Ability/AbilityManagerComponent.h"
+#include "OW/ActorComponents/Ability/AbilityManagerComponent.h"
 #include "OW/Character/OWCharacterPlayable.h"
 
 
@@ -11,28 +11,33 @@ UAbilityComponent::UAbilityComponent() : CooldownTime(0.f), CurrentCooldownTime(
 , AbilityState(EAbilityState::EAS_Available), PlayableCharacter(nullptr), AbilityManagerComponent(nullptr), AbilityMontage(nullptr)
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	bWantsInitializeComponent = true;
 }
 
-void UAbilityComponent::BeginPlay()
+void UAbilityComponent::InitializeComponent()
 {
-	Super::BeginPlay();
+	Super::InitializeComponent();
 
 	if(AOWCharacterPlayable* OwnerCharacter = Cast<AOWCharacterPlayable>(GetOwner()))
 	{
 		PlayableCharacter = OwnerCharacter;
 	}
+	
+	PlayableCharacter->AddAbilityStateChangedDelegate(AbilityType, FOnAbilityStateChangedDelegateWrapper(OnAbilityStateChanged));
+	PlayableCharacter->AddAbilityCooldownTimeChangedDelegate(AbilityType, FOnAbilityCooldownTimeChangedDelegateWrapper(OnAbilityCooldownTimeChanged));
+	
+	// if(UAbilityManagerComponent* ManagerComponent = PlayableCharacter->GetAbilityManagerComponent())
+	// {
+	// 	AbilityManagerComponent = ManagerComponent;
+	// }
+	AbilityManagerComponent->OnOtherAbilityStart.AddUObject(this, &UAbilityComponent::OtherAbilityStart);
+	AbilityManagerComponent->OnOtherAbilityEnd.AddUObject(this, &UAbilityComponent::OtherAbilityEnd);
+	MakeUnavailableAbilityType = AbilityManagerComponent->GetMakeUnavailableAbilityTypes(AbilityType);
+}
 
-	if(PlayableCharacter)
-	{
-		AbilityManagerComponent = PlayableCharacter->GetAbilityManagerComponent();
-	}
-
-	if(AbilityManagerComponent)
-	{
-		AbilityManagerComponent->OnOtherAbilityStart.AddUObject(this, &UAbilityComponent::OtherAbilityStart);
-		AbilityManagerComponent->OnOtherAbilityEnd.AddUObject(this, &UAbilityComponent::OtherAbilityEnd);
-		MakeUnavailableAbilityType = AbilityManagerComponent->GetMakeUnavailableAbilityTypes(AbilityType);
-	}
+void UAbilityComponent::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void UAbilityComponent::UseAbility()
@@ -56,7 +61,7 @@ bool UAbilityComponent::CanUseAbility()
 	bool bCanUseAbility = true;
 	
 	bCanUseAbility &= (AbilityState == EAbilityState::EAS_Available);
-	bCanUseAbility &= (AbilityManagerComponent->CanUseAbility(AbilityType));
+	//bCanUseAbility &= (AbilityManagerComponent->CanUseAbility(AbilityType));
 	
 	return bCanUseAbility;
 }
@@ -68,7 +73,7 @@ void UAbilityComponent::AbilityStart()
 	// Start Settings ( Capsule, Collision, etc.) in override
 	// Play AnimMontage ( if montage exist ) in override
 
-	AbilityManagerComponent->AbilityStart(AbilityType);
+	//AbilityManagerComponent->AbilityStart(AbilityType);
 	SetAbilityState(EAbilityState::EAS_Active);
 }
 
@@ -77,7 +82,7 @@ void UAbilityComponent::AbilityEnd()
 	// Call AbilityManagerComponent this Ability End;
 	// End Setting ( Capsule, Collision, etc.) in override
 
-	AbilityManagerComponent->AbilityEnd(AbilityType);
+	//AbilityManagerComponent->AbilityEnd(AbilityType);
 }
 
 void UAbilityComponent::CooldownStart()

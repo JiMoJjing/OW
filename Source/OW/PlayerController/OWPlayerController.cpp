@@ -105,7 +105,7 @@ void AOWPlayerController::BeginPlay()
 
 	FInputModeGameOnly GameOnlyInputMode;
 	SetInputMode(GameOnlyInputMode);
-
+		
 	// HUD
 	if(OWHUDClass)
 	{
@@ -116,7 +116,6 @@ void AOWPlayerController::BeginPlay()
 			OWHUD = Cast<UOWHUD>(HUDWidget);
 		}
 	}
-	
 	if(OWHUD)
 	{
 		OWHUD->AddToViewport(0);
@@ -139,10 +138,6 @@ void AOWPlayerController::OnPossess(APawn* InPawn)
 		CharacterApplyDamageInterface = TScriptInterface<IOWApplyDamageInterface>(InPawn);
 	}
 
-	if(OWHUD)
-	{
-		OWHUD->BindCharacterDelegate();
-	}
 }
 
 void AOWPlayerController::SetupInputComponent()

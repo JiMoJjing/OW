@@ -35,12 +35,21 @@ UGenjiQuickMeleeComponent::UGenjiQuickMeleeComponent() : QuickMeleeDamage(40.f)
 	CooldownTime = 1.f;
 }
 
+void UGenjiQuickMeleeComponent::InitializeComponent()
+{
+	Super::InitializeComponent();
+
+	if(QuickMeleeCollider)
+	{
+		QuickMeleeCollider->AttachToComponent(PlayableCharacter->GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		QuickMeleeCollider->SetRelativeLocation(FVector(75.f, 0.f, 0.f));
+	}
+}
+
 void UGenjiQuickMeleeComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	QuickMeleeCollider->AttachToComponent(PlayableCharacter->GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-	QuickMeleeCollider->SetRelativeLocation(FVector(75.f, 0.f, 0.f));
+
 }
 
 void UGenjiQuickMeleeComponent::AbilityStart()

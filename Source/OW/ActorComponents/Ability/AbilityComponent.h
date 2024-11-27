@@ -47,6 +47,8 @@ class OW_API UAbilityComponent : public UActorComponent
 public:
 	UAbilityComponent();
 
+	virtual void InitializeComponent() override;
+
 protected:
 	virtual void BeginPlay() override;
 
