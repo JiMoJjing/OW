@@ -83,6 +83,11 @@ void AOWProjectileBase::DeactivateProjectile()
 	NiagaraComponent->Deactivate();	
 }
 
+void AOWProjectileBase::SetCollisionProfile(FName InCollisionProfileName)
+{
+	HitSphereComponent->SetCollisionProfileName(InCollisionProfileName);
+}
+
 void AOWProjectileBase::OnSphereHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	const FVector HitLocation = GetActorLocation();

@@ -7,49 +7,116 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "OW/ActorComponents/Ability/AbilityComponent.h"
-#include "OW/ActorComponents/Ability/AbilityManagerComponent.h"
 #include "OW/Status/HPComponent.h"
 
-AOWCharacterPlayable::AOWCharacterPlayable()
+AOWCharacterPlayable::AOWCharacterPlayable() : bQuickMeleeActive(false), CurrentAbilityType(EAbilityType::EAT_None)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// SpringArm
+// SpringArm
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComponent->SetupAttachment(RootComponent);
 	SpringArmComponent->TargetArmLength = 400.0f;
 	SpringArmComponent->bUsePawnControlRotation = true;
 	SpringArmComponent->SocketOffset = FVector(0.f, 100.f, 50.f);
 
-	// Camera
+// Camera
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
 	CameraComponent->bUsePawnControlRotation = false;
+	
+// Collision CDO	
+	UpperArmLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("UpperArmL"));
+	LowerArmLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LowerArmL"));
+	
+	UpperArmRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("UpperArmR"));
+	LowerArmRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LowerArmR"));
+	
+	ThighLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("ThighL"));
+	CalfLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CalfL"));
+	FootLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("FootL"));
+	
+	ThighRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("ThighR"));
+	CalfRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CalfR"));
+	FootRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("FootR"));
 
-	// Collision
-	UpperArmLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("UpperArm_L"));
-	LowerArmLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LowerArm_L"));
+// SetupAttachment		
+	UpperArmLCollision->SetupAttachment(GetMesh(), TEXT("UpperArm_L"));
+	LowerArmLCollision->SetupAttachment(GetMesh(), TEXT("LowerArm_L"));
+	
+	UpperArmRCollision->SetupAttachment(GetMesh(), TEXT("UpperArm_R"));
+	LowerArmRCollision->SetupAttachment(GetMesh(), TEXT("LowerArm_R"));
+	
+	ThighLCollision->SetupAttachment(GetMesh(), TEXT("Thigh_L"));
+	CalfLCollision->SetupAttachment(GetMesh(), TEXT("Calf_L"));
+	FootLCollision->SetupAttachment(GetMesh(), TEXT("Foot_L"));
+	
+	ThighRCollision->SetupAttachment(GetMesh(), TEXT("Thigh_R"));
+	CalfRCollision->SetupAttachment(GetMesh(), TEXT("Calf_R"));
+	FootRCollision->SetupAttachment(GetMesh(), TEXT("Foot_R"));
+	
+	UpperArmLCollision->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
+	UpperArmLCollision->SetRelativeLocation(FVector(8.f, 0.f, 0.f));
+	UpperArmLCollision->SetCapsuleRadius(8.f);
+	UpperArmLCollision->SetCapsuleHalfHeight(18.f);
+	
+	LowerArmLCollision->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
+	LowerArmLCollision->SetCapsuleRadius(6.f);
+	LowerArmLCollision->SetCapsuleHalfHeight(16.f);
+	
+	ThighLCollision->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
+	ThighLCollision->SetCapsuleRadius(10.f);
+	ThighLCollision->SetCapsuleHalfHeight(26.f);
+	
+	CalfLCollision->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
+	CalfLCollision->SetCapsuleRadius(8.f);
+	CalfLCollision->SetCapsuleHalfHeight(26.f);
+	
+	FootLCollision->SetRelativeLocation(FVector(8.f, 0.f, 8.f));
+	FootLCollision->SetCapsuleRadius(6.f);
+	FootLCollision->SetCapsuleHalfHeight(16.f);
+	
+	UpperArmRCollision->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
+	UpperArmRCollision->SetRelativeLocation(FVector(-8.f, 0.f, 0.f));
+	UpperArmRCollision->SetCapsuleRadius(8.f);
+	UpperArmRCollision->SetCapsuleHalfHeight(18.f);
+	
+	LowerArmRCollision->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
+	LowerArmRCollision->SetCapsuleRadius(6.f);
+	LowerArmRCollision->SetCapsuleHalfHeight(16.f);
+	
+	ThighRCollision->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
+	ThighRCollision->SetCapsuleRadius(10.f);
+	ThighRCollision->SetCapsuleHalfHeight(26.f);
+	
+	CalfRCollision->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
+	CalfRCollision->SetCapsuleRadius(8.f);
+	CalfRCollision->SetCapsuleHalfHeight(26.f);
+	
+	FootRCollision->SetRelativeLocation(FVector(-8.f, 0.f, -8.f));
+	FootRCollision->SetCapsuleRadius(6.f);
+	FootRCollision->SetCapsuleHalfHeight(16.f);
+
+// Add to CollisionArray
 	CollisionArray.AddUnique(UpperArmLCollision);
 	CollisionArray.AddUnique(LowerArmLCollision);
-
-	UpperArmRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("UpperArm_R"));
-	LowerArmRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LowerArm_R"));
+	
 	CollisionArray.AddUnique(UpperArmRCollision);
 	CollisionArray.AddUnique(LowerArmRCollision);
 	
-	ThighLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Thigh_L"));
-	CalfLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Calf_L"));
-	FootLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Foot_L"));
 	CollisionArray.AddUnique(ThighLCollision);
 	CollisionArray.AddUnique(CalfLCollision);
 	CollisionArray.AddUnique(FootLCollision);
-		
-	ThighRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Thigh_R"));
-	CalfRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Calf_R"));
-	FootRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Foot_R"));
+	
 	CollisionArray.AddUnique(ThighRCollision);
 	CollisionArray.AddUnique(CalfRCollision);
 	CollisionArray.AddUnique(FootRCollision);
+}
+
+void AOWCharacterPlayable::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
 }
 
 void AOWCharacterPlayable::BeginPlay()
@@ -73,6 +140,32 @@ void AOWCharacterPlayable::SetIgnoreInput(bool bIgnore)
 	{
 		Controller->SetIgnoreMoveInput(bIgnore);
 		Controller->SetIgnoreLookInput(bIgnore);
+	}
+}
+
+void AOWCharacterPlayable::SetQuickMeleeActive(bool bActive)
+{
+	bQuickMeleeActive = bActive;
+}
+
+void AOWCharacterPlayable::AbilityStart(EAbilityType InAbilityType)
+{
+	CurrentAbilityType = InAbilityType;
+	if(OnAbilityStart.IsBound())
+	{
+		OnAbilityStart.Broadcast(CurrentAbilityType);
+	}
+}
+
+void AOWCharacterPlayable::AbilityEnd(EAbilityType InAbilityType)
+{
+	if(CurrentAbilityType == InAbilityType)
+	{
+		CurrentAbilityType = EAbilityType::EAT_None;
+	}
+	if(OnAbilityEnd.IsBound())
+	{
+		OnAbilityEnd.Broadcast(CurrentAbilityType);
 	}
 }
 
@@ -202,10 +295,5 @@ void AOWCharacterPlayable::TriggerAnimNotifyState(float DeltaTime)
 void AOWCharacterPlayable::InitWidget()
 {
 	HPComponent->InitializeWidget();
-
-	for(auto Ability : AbilityComponents)
-	{
-		Ability.Value->InitializeWidget();
-	}
 }
 

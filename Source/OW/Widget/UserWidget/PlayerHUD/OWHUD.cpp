@@ -30,7 +30,8 @@ void UOWHUD::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	AbilityWidgets.Add(AbilityOneWidget->GetAbilityType(), AbilityOneWidget);
+	AbilityWidgets.Emplace(AbilityOneWidget->GetAbilityType(), AbilityOneWidget);
+	AbilityWidgets.Emplace(AbilityTwoWidget->GetAbilityType(), AbilityTwoWidget);
 
 	BindCharacterDelegate();
 }
@@ -48,8 +49,25 @@ void UOWHUD::BindCharacterDelegate()
 	}
 	
 	// AbilityComponent Bind
-	// CharacterPlayable->GetAbilityStateChangedDelegateWrapper(AbilityOneWidget->GetAbilityType()).OnAbilityStateChanged->AddUObject(AbilityOneWidget, &UAbilityWidget::AbilityStateChanged);
-	// CharacterPlayable->GetAbilityCooldownTimeChangedDelegateWrapper(AbilityOneWidget->GetAbilityType()).OnAbilityCooldownTimeChanged->AddUObject(AbilityOneWidget, &UAbilityWidget::CooldownTimeChanged);
+
+	if(CharacterPlayable->GetAbilityStateChangedDelegateWrapper(AbilityOneWidget->GetAbilityType()).IsValid())
+	{
+		CharacterPlayable->GetAbilityStateChangedDelegateWrapper(AbilityOneWidget->GetAbilityType()).OnAbilityStateChanged->AddUObject(AbilityOneWidget, &UAbilityWidget::AbilityStateChanged);
+	}
+	if(CharacterPlayable->GetAbilityCooldownTimeChangedDelegateWrapper(AbilityOneWidget->GetAbilityType()).IsValid())
+	{
+		CharacterPlayable->GetAbilityCooldownTimeChangedDelegateWrapper(AbilityOneWidget->GetAbilityType()).OnAbilityCooldownTimeChanged->AddUObject(AbilityOneWidget, &UAbilityWidget::CooldownTimeChanged);
+	}
+
+	if(CharacterPlayable->GetAbilityStateChangedDelegateWrapper(AbilityTwoWidget->GetAbilityType()).IsValid())
+	{
+		CharacterPlayable->GetAbilityStateChangedDelegateWrapper(AbilityTwoWidget->GetAbilityType()).OnAbilityStateChanged->AddUObject(AbilityTwoWidget, &UAbilityWidget::AbilityStateChanged);
+	}
+	if(CharacterPlayable->GetAbilityCooldownTimeChangedDelegateWrapper(AbilityTwoWidget->GetAbilityType()).IsValid())
+	{
+		CharacterPlayable->GetAbilityCooldownTimeChangedDelegateWrapper(AbilityTwoWidget->GetAbilityType()).OnAbilityCooldownTimeChanged->AddUObject(AbilityTwoWidget, &UAbilityWidget::CooldownTimeChanged);
+	}
+	
 
 	// Ammo Bind
 	if(UBasicWeaponComponent* BasicWeaponComponent = CharacterPlayable->GetBasicWeaponComponent())

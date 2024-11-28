@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "OW/Collision/OWCollisionProfile.h"
 #include "OW/Interface/OWApplyDamageInterface.h"
 #include "OW/Status/HPComponent.h"
 
@@ -32,34 +33,49 @@ AOWCharacterBase::AOWCharacterBase()
 	GetCharacterMovement()->MaxAcceleration = 2048.f;
 
 	// Mesh
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> BaseMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
+	if(BaseMeshRef.Object)
+	{
+		GetMesh()->SetSkeletalMesh(BaseMeshRef.Object);
+	}
+	
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -100.f), FRotator(0.f, -90.f, 0.f));
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	GetMesh()->CanCharacterStepUpOn = ECB_No;
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+	GetMesh()->SetSimulatePhysics(false);
+
+	MeshRelativeLocation = GetMesh()->GetRelativeLocation();
+	MeshRelativeRotation = GetMesh()->GetRelativeRotation();
 
 	// HPComponent
 	HPComponent = CreateDefaultSubobject<UHPComponent>(TEXT("HPComponent"));
 
+	// Collision CDO
 	BodyCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Body"));
 	HeadCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Head"));
+	
 	HeadCollision->ComponentTags.Add(TEXT("Head"));
 	
+	BodyCollision->SetupAttachment(GetMesh(), TEXT("Body"));
+	HeadCollision->SetupAttachment(GetMesh(), TEXT("Head"));
+	
+	BodyCollision->SetRelativeRotation(FRotator(90.f, 90.f, 0.f));
+	BodyCollision->SetCapsuleRadius(18.f);
+	BodyCollision->SetCapsuleHalfHeight(30.f);
+	
+	HeadCollision->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
+	HeadCollision->SetRelativeLocation(FVector(0.f, -15.f, 0.f));
+	HeadCollision->SetCapsuleRadius(12.f);
+	HeadCollision->SetCapsuleHalfHeight(12.f);
+
 	CollisionArray.AddUnique(BodyCollision);
 	CollisionArray.AddUnique(HeadCollision);
-
 }
 
 void AOWCharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	if(USkeletalMeshComponent* SkeletalMeshComponent = GetMesh())
-	{
-		MeshRelativeLocation = SkeletalMeshComponent->GetRelativeLocation();
-        MeshRelativeRotation = SkeletalMeshComponent->GetRelativeRotation();
-       	SkeletalMeshComponent->SetSimulatePhysics(false);
-       	SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
 }
 
 void AOWCharacterBase::BeginPlay()
@@ -126,7 +142,7 @@ void AOWCharacterBase::CharacterDeath()
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 	GetMesh()->SetSimulatePhysics(true);
 	
-	SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SetMeshCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AOWCharacterBase::CharacterRevive()
@@ -140,12 +156,12 @@ void AOWCharacterBase::CharacterRevive()
 	GetMesh()->SetRelativeRotation(MeshRelativeRotation);
 	GetMesh()->SetRelativeLocation(MeshRelativeLocation);
 	
-	SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	SetMeshCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 	HPComponent->HPFullRecovery();
 }
 
-void AOWCharacterBase::SetCollisionEnabled(ECollisionEnabled::Type InType)
+void AOWCharacterBase::SetMeshCollisionEnabled(ECollisionEnabled::Type InType)
 { 
 	for(auto& Collision : CollisionArray)
 	{
@@ -153,7 +169,7 @@ void AOWCharacterBase::SetCollisionEnabled(ECollisionEnabled::Type InType)
 	}
 }
 
-void AOWCharacterBase::SetCollisionProfileName(FName InCollisionProfileName)
+void AOWCharacterBase::SetMeshCollisionProfileName(FName InCollisionProfileName)
 {
 	for(auto& Collision : CollisionArray)
 	{

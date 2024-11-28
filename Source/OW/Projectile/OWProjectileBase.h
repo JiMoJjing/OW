@@ -28,6 +28,9 @@ public:
 	void ActivateProjectile(const FVector& StartLocation, const FVector& Direction);
 	void DeactivateProjectile();
 
+// Change CollisionProfile
+	void SetCollisionProfile(FName InCollisionProfileName);
+
 
 // Apply Damage	
 private:

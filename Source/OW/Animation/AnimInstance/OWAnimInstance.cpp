@@ -6,7 +6,7 @@
 
 UOWAnimInstance::UOWAnimInstance()
 {
-	MovingThreshold = 3.f;
+	MovingThreshold = 10.f;
 	JumpingThreshold = 100.f;
 	GroundSpeed = 0.f;
 

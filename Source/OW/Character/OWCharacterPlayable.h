@@ -12,16 +12,21 @@
 #include "OWCharacterPlayable.generated.h"
 
 
+class UQuickMeleeComponent;
 class UBasicWeaponComponent;
 class UAbilityManagerComponent;
 class UAbilityComponent;
 class UCameraComponent;
 class USpringArmComponent;
- 
+
+
 DECLARE_MULTICAST_DELEGATE(FOnAnimNotify);
 DECLARE_MULTICAST_DELEGATE(FOnAnimNotifyBegin);
 DECLARE_MULTICAST_DELEGATE(FOnAnimNotifyEnd);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnAnimNotifyState, float /* DeltaTime */);
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityStart, EAbilityType /* InAbilityType */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityEnd, EAbilityType /* InAbilityType */);
 
 /**
  * 
@@ -34,6 +39,8 @@ class OW_API AOWCharacterPlayable : public AOWCharacterBase, public IOWApplyDama
 
 public:
 	AOWCharacterPlayable();
+
+	virtual void PostInitializeComponents() override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -49,55 +56,42 @@ protected:
 	TObjectPtr<UCameraComponent> CameraComponent;
 
 	
-// Input Section
-public:
-	void SetIgnoreInput(bool bIgnore);
-	
-
-// AbilityComponent Section	
-protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
-	TMap<EAbilityType, TObjectPtr<UAbilityComponent>> AbilityComponents;
-
-// BasicWeaponComponent Section
-	UPROPERTY()
-	TObjectPtr<UBasicWeaponComponent> BasicWeaponComponent;
-
-public:
-	UBasicWeaponComponent* GetBasicWeaponComponent() { return BasicWeaponComponent; }
-
-	
 // Collision Section
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> UpperArmLCollision;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> LowerArmLCollision;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> UpperArmRCollision;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> LowerArmRCollision;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> ThighLCollision;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> CalfLCollision;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> FootLCollision;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> ThighRCollision;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> CalfRCollision;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> FootRCollision;
+	
+	
+// Input Section
+public:
+	void SetIgnoreInput(bool bIgnore);
 
 	
 // Controller Reference Caching
@@ -105,7 +99,66 @@ protected:
 	UPROPERTY()
 	TObjectPtr<APlayerController> OwnerController;
 
+	
+// IOWApplyDamageInterface
+public:
+	virtual void ApplyDamageSuccess(float Damage, bool bIsHeadShot) override;
+	virtual void KillSuccess() override;
 
+	
+// IOWPlayerTraceInterface
+	virtual bool TraceUnderCrosshair(const float TraceDistance, FHitResult& OutHitResult, FVector& OutHitLocation, const ECollisionChannel InCollisionChannel) override;
+	virtual void GetDirectionToCrosshair(const FVector& StartLocation, FVector& OutDirection, const ECollisionChannel InCollisionChannel) override;
+	
+	
+// IOWTriggerAnimNotifyInterface
+	virtual void TriggerAnimNotify() override;
+	virtual void TriggerAnimNotifyBegin() override;
+	virtual void TriggerAnimNotifyEnd() override;
+	virtual void TriggerAnimNotifyState(float DeltaTime) override;
+
+	
+// AnimNotify Trigger DELEGATE
+	FOnAnimNotify OnAnimNotify;
+	FOnAnimNotifyBegin OnAnimNotifyBegin;
+	FOnAnimNotifyEnd OnAnimNotifyEnd;
+	FOnAnimNotifyState OnAnimNotifyState;
+
+	
+// BasicWeaponComponent Section
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = BasicWeapon, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UBasicWeaponComponent> BasicWeaponComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = QuickMelee, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UQuickMeleeComponent> QuickMeleeComponent;
+
+	UPROPERTY()
+	uint8 bQuickMeleeActive : 1;
+	
+public:
+	UBasicWeaponComponent* GetBasicWeaponComponent() { return BasicWeaponComponent; }
+
+	UQuickMeleeComponent* GetQuickMeleeComponent() { return QuickMeleeComponent; }
+
+	FORCEINLINE bool GetQuickMeleeActive() const { return bQuickMeleeActive; }
+	
+	void SetQuickMeleeActive(bool bActive);
+	
+	
+// Ability Section
+	FOnAbilityStart OnAbilityStart;
+	FOnAbilityEnd OnAbilityEnd;
+
+	void AbilityStart(EAbilityType InAbilityType);
+	void AbilityEnd(EAbilityType InAbilityType);
+
+	FORCEINLINE EAbilityType GetCurrentAbilityType() const { return CurrentAbilityType; }
+	
+protected:
+	EAbilityType CurrentAbilityType;
+	
+	
 // Ability Delegate Wrappers
 protected:
 	UPROPERTY()
@@ -120,32 +173,7 @@ public:
 
 	FOnAbilityStateChangedDelegateWrapper& GetAbilityStateChangedDelegateWrapper(EAbilityType InAbilityType) { return AbilityStateChangedDelegateWrappers[InAbilityType]; }
 	FOnAbilityCooldownTimeChangedDelegateWrapper& GetAbilityCooldownTimeChangedDelegateWrapper(EAbilityType InAbilityType) { return AbilityCooldownTimeChangedDelegateWrappers[InAbilityType]; }
-
 	
-// IOWApplyDamageInterface
-public:
-	virtual void ApplyDamageSuccess(float Damage, bool bIsHeadShot) override;
-	virtual void KillSuccess() override;
-
-	
-// IOWPlayerTraceInterface
-	virtual bool TraceUnderCrosshair(const float TraceDistance, FHitResult& OutHitResult, FVector& OutHitLocation, const ECollisionChannel InCollisionChannel) override;
-	virtual void GetDirectionToCrosshair(const FVector& StartLocation, FVector& OutDirection, const ECollisionChannel InCollisionChannel) override;
-
-
-// AnimNotify Trigger DELEGATE
-	FOnAnimNotify OnAnimNotify;
-	FOnAnimNotifyBegin OnAnimNotifyBegin;
-	FOnAnimNotifyEnd OnAnimNotifyEnd;
-	FOnAnimNotifyState OnAnimNotifyState;
-
-
-// IOWTriggerAnimNotifyInterface
-	virtual void TriggerAnimNotify() override;
-	virtual void TriggerAnimNotifyBegin() override;
-	virtual void TriggerAnimNotifyEnd() override;
-	virtual void TriggerAnimNotifyState(float DeltaTime) override;
-
 	
 // Widget
 	virtual void InitWidget();

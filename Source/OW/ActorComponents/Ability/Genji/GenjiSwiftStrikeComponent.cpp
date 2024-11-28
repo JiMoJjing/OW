@@ -46,16 +46,14 @@ void UGenjiSwiftStrikeComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
 
-	if(PlayableCharacter)
+	if(CharacterPlayable)
 	{
-		CapsuleSize2D = FVector2D(PlayableCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius(), PlayableCharacter->GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
-
-		PlayableCharacter->GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &UGenjiSwiftStrikeComponent::OnCapsuleComponentHit);
-		PlayableCharacter->GetCharacterMovement()->MaxFlySpeed = SwiftStrikeSpeed;
+		CapsuleSize2D = FVector2D(CharacterPlayable->GetCapsuleComponent()->GetScaledCapsuleRadius(), CharacterPlayable->GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
+		CharacterPlayable->GetCharacterMovement()->MaxFlySpeed = SwiftStrikeSpeed;
 	}
 	if(SwiftStrikeCollider)
 	{
-		SwiftStrikeCollider->AttachToComponent(PlayableCharacter->GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		SwiftStrikeCollider->AttachToComponent(CharacterPlayable->GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	}
 }
 
@@ -98,15 +96,16 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeStartSetting()
 	SetSwiftStrikeStartLocation();
 	SetSwiftStrikeEndLocation();
 
-	bCheckDoubleJump = PlayableCharacter->JumpCurrentCount == PlayableCharacter->JumpMaxCount;
+	bCheckDoubleJump = CharacterPlayable->JumpCurrentCount == CharacterPlayable->JumpMaxCount;
 	bSwiftStrikeCooldownReset = false;
 
-	PlayableCharacter->SetIgnoreInput(true);
-	PlayableCharacter->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
-	PlayableCharacter->GetCharacterMovement()->MaxAcceleration = 1000000.f;
-	PlayableCharacter->OnAnimNotifyState.AddUObject(this, &UGenjiSwiftStrikeComponent::SwiftStrikeUptade);
-	PlayableCharacter->OnAnimNotifyEnd.AddUObject(this, &UGenjiSwiftStrikeComponent::AbilityEnd);
-	PlayableCharacter->GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel3, ECR_Ignore);
+	CharacterPlayable->SetIgnoreInput(true);
+	CharacterPlayable->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+	CharacterPlayable->GetCharacterMovement()->MaxAcceleration = 1000000.f;
+	CharacterPlayable->OnAnimNotifyState.AddUObject(this, &UGenjiSwiftStrikeComponent::SwiftStrikeUptade);
+	CharacterPlayable->OnAnimNotifyEnd.AddUObject(this, &UGenjiSwiftStrikeComponent::AbilityEnd);
+	CharacterPlayable->GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel3, ECR_Ignore);
+	CharacterPlayable->GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &UGenjiSwiftStrikeComponent::OnCapsuleComponentHit);
 
 	SwiftStrikeCollider->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	OverlappedActors.Empty();
@@ -119,19 +118,20 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeStartSetting()
 
 void UGenjiSwiftStrikeComponent::SwiftStrikeEndSetting()
 {
-	PlayableCharacter->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
-	PlayableCharacter->GetCharacterMovement()->MaxAcceleration = 2048.f;
-	PlayableCharacter->GetCharacterMovement()->StopMovementImmediately();
-	PlayableCharacter->SetIgnoreInput(false);
-	PlayableCharacter->OnAnimNotifyState.RemoveAll(this);
-	PlayableCharacter->OnAnimNotifyEnd.RemoveAll(this);
-	PlayableCharacter->GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel3, ECR_Block);
+	CharacterPlayable->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
+	CharacterPlayable->GetCharacterMovement()->MaxAcceleration = 2048.f;
+	CharacterPlayable->GetCharacterMovement()->StopMovementImmediately();
+	CharacterPlayable->SetIgnoreInput(false);
+	CharacterPlayable->OnAnimNotifyState.RemoveAll(this);
+	CharacterPlayable->OnAnimNotifyEnd.RemoveAll(this);
+	CharacterPlayable->GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel3, ECR_Block);
+	CharacterPlayable->GetCapsuleComponent()->OnComponentHit.RemoveAll(this);
 
 	SwiftStrikeCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	if(bCheckDoubleJump)
 	{
-		PlayableCharacter->JumpCurrentCount = 2;
+		CharacterPlayable->JumpCurrentCount = 2;
 	}
 
 	bCheckDoubleJump = false;
@@ -146,7 +146,7 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeEndSetting()
 
 void UGenjiSwiftStrikeComponent::SetSwiftStrikeStartLocation()
 {
-	SwiftStrikeStartLocation = PlayableCharacter->GetActorLocation();
+	SwiftStrikeStartLocation = CharacterPlayable->GetActorLocation();
 }
 
 void UGenjiSwiftStrikeComponent::SetSwiftStrikeEndLocation()
@@ -154,7 +154,7 @@ void UGenjiSwiftStrikeComponent::SetSwiftStrikeEndLocation()
 	FHitResult HitResult;
 	FVector TraceEndLocation;
 
-	bool bLineTrace = PlayableCharacter->TraceUnderCrosshair(SwiftStrikeDistance, HitResult, TraceEndLocation, ECC_Camera);
+	bool bLineTrace = CharacterPlayable->TraceUnderCrosshair(SwiftStrikeDistance, HitResult, TraceEndLocation, ECC_Camera);
 	if(bLineTrace)
 	{
 		const FVector HitNormal = HitResult.Normal;
@@ -169,20 +169,20 @@ void UGenjiSwiftStrikeComponent::SetSwiftStrikeEndLocation()
 #if WITH_EDITOR
 	// Draw Debug
 	DrawDebugSphere(GetWorld(), SwiftStrikeEndLocation, 10.f, 20, FColor::Green, false, 5.f, 0U, 1.f);
-	DrawDebugLine(GetWorld(), PlayableCharacter->GetActorLocation(), SwiftStrikeEndLocation, FColor::Green, false, 5.f, 0U, 1.f);
+	DrawDebugLine(GetWorld(), CharacterPlayable->GetActorLocation(), SwiftStrikeEndLocation, FColor::Green, false, 5.f, 0U, 1.f);
 #endif
 }
 
 void UGenjiSwiftStrikeComponent::SwiftStrikeUptade(float DeltaTime)
 {
-	FVector ActorLocation = PlayableCharacter->GetActorLocation();
+	FVector ActorLocation = CharacterPlayable->GetActorLocation();
 	FVector Direction = SwiftStrikeEndLocation - ActorLocation;
 	Direction.Normalize();
 
 	Direction += SwiftStrikeHitNormalProjection;
 	Direction.Normalize();
 	
-	PlayableCharacter->AddMovementInput(Direction, 1.f, true);
+	CharacterPlayable->AddMovementInput(Direction, 1.f, true);
 
 	SwiftStrikeHitNormalProjection = FMath::VInterpTo(SwiftStrikeHitNormalProjection, FVector::ZeroVector, DeltaTime, HitNormalProjectionInterpSpeed);
 
@@ -200,7 +200,7 @@ void UGenjiSwiftStrikeComponent::OnCapsuleComponentHit(UPrimitiveComponent* HitC
 	if(Hit.bBlockingHit && AbilityState == EAbilityState::EAS_Active)
 	{
 		const FVector HitNormal = Hit.Normal;
-		const FVector ActorForwardVector = PlayableCharacter->GetActorForwardVector();
+		const FVector ActorForwardVector = CharacterPlayable->GetActorForwardVector();
 		// 평면 투영 벡터 공식을 사용한 방법 Vp = V - (V dot N) * N
 		SwiftStrikeHitNormalProjection = ActorForwardVector - FVector::DotProduct(ActorForwardVector, HitNormal) * HitNormal;
 	}
@@ -221,7 +221,7 @@ void UGenjiSwiftStrikeComponent::OnSwiftStrikeColliderBeginOverlap(UPrimitiveCom
 			return;
 		}
 		OverlappedActors.AddUnique(OverlappedActor);
-		UGameplayStatics::ApplyDamage(OverlappedActor, SwiftStrikeDamage, PlayableCharacter->GetController(), GetOwner(), UDamageType::StaticClass());
+		UGameplayStatics::ApplyDamage(OverlappedActor, SwiftStrikeDamage, CharacterPlayable->GetController(), GetOwner(), UDamageType::StaticClass());
 
 		const FVector EffectLocation = OtherComp->GetComponentLocation();
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(OtherComp, SwiftStrikeHitEffect, EffectLocation, FRotator::ZeroRotator);

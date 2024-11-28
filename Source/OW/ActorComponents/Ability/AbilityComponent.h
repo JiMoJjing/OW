@@ -22,7 +22,9 @@ struct FOnAbilityStateChangedDelegateWrapper
 	GENERATED_BODY()
 
 	FOnAbilityStateChangedDelegateWrapper() : OnAbilityStateChanged(nullptr) {}
-	FOnAbilityStateChangedDelegateWrapper(FOnAbilityStateChanged& InDelegate) : OnAbilityStateChanged(&InDelegate) {} 
+	FOnAbilityStateChangedDelegateWrapper(FOnAbilityStateChanged& InDelegate) : OnAbilityStateChanged(&InDelegate) {}
+
+	bool IsValid() const { return OnAbilityStateChanged != nullptr; }
 
 	FOnAbilityStateChanged* OnAbilityStateChanged;
 };
@@ -33,7 +35,9 @@ struct FOnAbilityCooldownTimeChangedDelegateWrapper
 	GENERATED_BODY()
 
 	FOnAbilityCooldownTimeChangedDelegateWrapper() : OnAbilityCooldownTimeChanged(nullptr) {}
-	FOnAbilityCooldownTimeChangedDelegateWrapper(FOnAbilityCooldownTimeChanged& InDelegate) : OnAbilityCooldownTimeChanged(&InDelegate) {} 
+	FOnAbilityCooldownTimeChangedDelegateWrapper(FOnAbilityCooldownTimeChanged& InDelegate) : OnAbilityCooldownTimeChanged(&InDelegate) {}
+
+	bool IsValid() const { return OnAbilityCooldownTimeChanged != nullptr; }
 
 	FOnAbilityCooldownTimeChanged* OnAbilityCooldownTimeChanged;
 };
@@ -82,12 +86,12 @@ protected:
 	UPROPERTY()
 	EAbilityType AbilityType;
 
-	UPROPERTY(meta = (Bitmask, BitmaskEnum = "/Script/OW.EAbilityType"))
-	uint8 MakeUnavailableAbilityType;
-
-public:
-	FORCEINLINE EAbilityType GetAbilityType() { return AbilityType; }
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true, BitMask, BitMaskEnum = "/Script/OW.EAbilityType"))
+	uint8 CancellableAbilityTypes = 0;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true, BitMask, BitMaskEnum = "/Script/OW.EAbilityType"))
+	uint8 MakeUnavailableAbilityTypes = 0;
+	
 	
 // AbilityState Section
 protected:
@@ -106,10 +110,7 @@ protected:
 // Reference Caching Section
 protected:
 	UPROPERTY()
-	TObjectPtr<AOWCharacterPlayable> PlayableCharacter;
-
-	UPROPERTY()
-	TObjectPtr<UAbilityManagerComponent> AbilityManagerComponent;
+	TObjectPtr<AOWCharacterPlayable> CharacterPlayable;
 
 
 // Montage Section	
@@ -128,6 +129,6 @@ public:
 	FOnAbilityStateChanged OnAbilityStateChanged;
 
 // InitWidget
-	void InitializeWidget();
+	void InitWidget();
 };
 

@@ -65,7 +65,7 @@ bool UBasicWeaponComponent::CheckAvailable()
 {
 	bool bAvailable = true;
 	// Check CharacterPlayable Ability Not Active
-	// Check CharacterPlayable QuickMelee Not Active
+	bAvailable &= !(CharacterPlayable->GetQuickMeleeActive());
 	bAvailable &= !bDelayActive;
 
 	return bAvailable;

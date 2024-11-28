@@ -40,20 +40,22 @@ AOWStandardBot::AOWStandardBot() : PoolSize(20), PoolIndex(0)
 	HPBarWidgetComponent = CreateDefaultSubobject<UHPBarWidgetComponent>(TEXT("HPBarWidgetComponent"));
 	HPBarWidgetComponent->SetupAttachment(RootComponent);
 	HPBarWidgetComponent->SetRelativeLocation(FVector(0.f, 0.f, 130.f));
+	HPBarWidgetComponent->SetDrawSize(FVector2D(100.f, 100.f));
 
-	ArmLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("ArmL"));
-	ArmRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("ArmR"));
+	ArmLCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Arm_L"));
+	ArmRCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Arm_R"));
 	LegCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Leg"));
-
+	
+	ArmLCollision->SetupAttachment(GetMesh(), TEXT("Arm_L"));
+	ArmRCollision->SetupAttachment(GetMesh(), TEXT("Arm_R"));
+	LegCollision->SetupAttachment(GetMesh(), TEXT("Leg"));
+	
 	CollisionArray.AddUnique(ArmLCollision);
 	CollisionArray.AddUnique(ArmRCollision);
 	CollisionArray.AddUnique(LegCollision);
 	
-	BodyCollision->SetupAttachment(GetMesh(), TEXT("Body"));
-	HeadCollision->SetupAttachment(GetMesh(), TEXT("Head"));
-	ArmLCollision->SetupAttachment(GetMesh(), TEXT("Arm_L"));
-	ArmRCollision->SetupAttachment(GetMesh(), TEXT("Arm_R"));
-	LegCollision->SetupAttachment(GetMesh(), TEXT("Leg"));
+	GetCapsuleComponent()->SetCollisionProfileName(OWTEAM2CAPSULE);
+	SetMeshCollisionProfileName(OWTEAM2MESH);
 
 	static ConstructorHelpers::FClassFinder<AOWProjectileBase> StandardBotProjectileClassRef(TEXT("/Game/OW/StandardBot/Blueprint/BP_StandardBot_Projectile.BP_StandardBot_Projectile_C"));
 	if(StandardBotProjectileClassRef.Class)
@@ -71,15 +73,11 @@ AOWStandardBot::AOWStandardBot() : PoolSize(20), PoolIndex(0)
 	RightMuzzle = CreateDefaultSubobject<USceneComponent>(TEXT("RightMuzzle"));
 	LeftMuzzle->SetupAttachment(GetMesh(), TEXT("bone_08B2"));
 	RightMuzzle->SetupAttachment(GetMesh(), TEXT("bone_08B3"));
-
 }
 
 void AOWStandardBot::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	GetCapsuleComponent()->SetCollisionProfileName(OWTEAM2CAPSULE);
-	SetCollisionProfileName(OWTEAM2MESH);
 }
 
 void AOWStandardBot::BeginPlay()
@@ -145,6 +143,7 @@ void AOWStandardBot::FillProjectilePool()
 	{
 		if(AOWProjectileBase* ProjectileBase = World->SpawnActor<AOWProjectileBase>(StandardBotProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParameters))
 		{
+			ProjectileBase->SetCollisionProfile(OWTEAM2HIT);
 			ProjectilePool.Add(ProjectileBase);
 		}
 	}

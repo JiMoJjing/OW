@@ -5,6 +5,7 @@
 #include "OW/Interface/OWCharacterInputInterface.h"
 #include "OWGenji.generated.h"
 
+class UGenjiDeflectComponent;
 class UGenjiShurikenComponent;
 class UProjectileWeaponComponent;
 class UGenjiSwiftStrikeComponent;
@@ -28,6 +29,12 @@ public:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Genji, meta = (AllowPrivateAccess = true))
 	TObjectPtr<UGenjiShurikenComponent> GenjiShurikenComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Genji, meta = (AllowPrivateAccess = true))
+	TObjectPtr<UGenjiSwiftStrikeComponent> GenjiSwiftStrikeComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Genji, meta = (AllowPrivateAccess = true))
+	TObjectPtr<UGenjiDeflectComponent> GenjiDeflectComponent;
 
 
 // IOWCharacterInputInterface

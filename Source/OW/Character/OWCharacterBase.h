@@ -44,13 +44,13 @@ protected:
 // Collision Section
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> BodyCollision;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> HeadCollision;
 
 	UPROPERTY()
-	TArray<TObjectPtr<UCapsuleComponent>> CollisionArray;
+	TArray<UCapsuleComponent*> CollisionArray;
 
-	void SetCollisionEnabled(ECollisionEnabled::Type InType);
-	void SetCollisionProfileName(FName InCollisionProfileName);
+	void SetMeshCollisionEnabled(ECollisionEnabled::Type InType);
+	void SetMeshCollisionProfileName(FName InCollisionProfileName);
 };

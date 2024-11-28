@@ -64,8 +64,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", BindWidget))
 	TObjectPtr<UAbilityWidget> AbilityOneWidget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", BindWidget))
+	TObjectPtr<UAbilityWidget> AbilityTwoWidget;
+	
 	UPROPERTY()
-	TMap<EAbilityType, TObjectPtr<UAbilityWidget>> AbilityWidgets;
+	TMap<EAbilityType, UAbilityWidget*> AbilityWidgets;
 
 	
 // Ammo Widget

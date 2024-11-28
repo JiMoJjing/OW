@@ -3,12 +3,11 @@
 
 #include "AbilityComponent.h"
 
-#include "OW/ActorComponents/Ability/AbilityManagerComponent.h"
 #include "OW/Character/OWCharacterPlayable.h"
 
 
-UAbilityComponent::UAbilityComponent() : CooldownTime(0.f), CurrentCooldownTime(0.f), AbilityType(EAbilityType::EAT_None), MakeUnavailableAbilityType(0)
-, AbilityState(EAbilityState::EAS_Available), PlayableCharacter(nullptr), AbilityManagerComponent(nullptr), AbilityMontage(nullptr)
+UAbilityComponent::UAbilityComponent() : CooldownTime(0.f), CurrentCooldownTime(0.f), AbilityType(EAbilityType::EAT_None),
+AbilityState(EAbilityState::EAS_Available), CharacterPlayable(nullptr), AbilityMontage(nullptr)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	bWantsInitializeComponent = true;
@@ -20,19 +19,14 @@ void UAbilityComponent::InitializeComponent()
 
 	if(AOWCharacterPlayable* OwnerCharacter = Cast<AOWCharacterPlayable>(GetOwner()))
 	{
-		PlayableCharacter = OwnerCharacter;
+		CharacterPlayable = OwnerCharacter;
 	}
 	
-	PlayableCharacter->AddAbilityStateChangedDelegate(AbilityType, FOnAbilityStateChangedDelegateWrapper(OnAbilityStateChanged));
-	PlayableCharacter->AddAbilityCooldownTimeChangedDelegate(AbilityType, FOnAbilityCooldownTimeChangedDelegateWrapper(OnAbilityCooldownTimeChanged));
-	
-	// if(UAbilityManagerComponent* ManagerComponent = PlayableCharacter->GetAbilityManagerComponent())
-	// {
-	// 	AbilityManagerComponent = ManagerComponent;
-	// }
-	AbilityManagerComponent->OnOtherAbilityStart.AddUObject(this, &UAbilityComponent::OtherAbilityStart);
-	AbilityManagerComponent->OnOtherAbilityEnd.AddUObject(this, &UAbilityComponent::OtherAbilityEnd);
-	MakeUnavailableAbilityType = AbilityManagerComponent->GetMakeUnavailableAbilityTypes(AbilityType);
+	CharacterPlayable->AddAbilityStateChangedDelegate(AbilityType, FOnAbilityStateChangedDelegateWrapper(OnAbilityStateChanged));
+	CharacterPlayable->AddAbilityCooldownTimeChangedDelegate(AbilityType, FOnAbilityCooldownTimeChangedDelegateWrapper(OnAbilityCooldownTimeChanged));
+
+	CharacterPlayable->OnAbilityStart.AddUObject(this, &UAbilityComponent::OtherAbilityStart);
+	CharacterPlayable->OnAbilityEnd.AddUObject(this, &UAbilityComponent::OtherAbilityEnd);
 }
 
 void UAbilityComponent::BeginPlay()
@@ -50,46 +44,30 @@ void UAbilityComponent::UseAbility()
 
 bool UAbilityComponent::CanUseAbility()
 {
-	if(nullptr == AbilityManagerComponent)
-	{
-		return false;
-	}
-
-	// Check AbilityState
-	// Check Manager CanUseAbility
-	
 	bool bCanUseAbility = true;
+	EAbilityType CurrentAbilityType = CharacterPlayable->GetCurrentAbilityType();
+	bool bCanCancel = (CancellableAbilityTypes & static_cast<uint8>(CurrentAbilityType)) || (CurrentAbilityType == EAbilityType::EAT_None);
 	
 	bCanUseAbility &= (AbilityState == EAbilityState::EAS_Available);
-	//bCanUseAbility &= (AbilityManagerComponent->CanUseAbility(AbilityType));
+	bCanUseAbility &= !(CharacterPlayable->GetQuickMeleeActive());
+	bCanUseAbility &= bCanCancel;
 	
 	return bCanUseAbility;
 }
 
 void UAbilityComponent::AbilityStart()
 {
-	// Call AbilityManagerComponent this Ability Start
-	// Change Ability State
-	// Start Settings ( Capsule, Collision, etc.) in override
-	// Play AnimMontage ( if montage exist ) in override
-
-	//AbilityManagerComponent->AbilityStart(AbilityType);
+	CharacterPlayable->AbilityStart(AbilityType);
 	SetAbilityState(EAbilityState::EAS_Active);
 }
 
 void UAbilityComponent::AbilityEnd()
 {
-	// Call AbilityManagerComponent this Ability End;
-	// End Setting ( Capsule, Collision, etc.) in override
-
-	//AbilityManagerComponent->AbilityEnd(AbilityType);
+	CharacterPlayable->AbilityEnd(AbilityType);
 }
 
 void UAbilityComponent::CooldownStart()
 {
-	// SetAbilityState Cooldown
-	// SetTimer
-	
 	if(AbilityState != EAbilityState::EAS_Unavailable)
 	{
 		SetAbilityState(EAbilityState::EAS_Cooldown);
@@ -139,7 +117,7 @@ void UAbilityComponent::SetAbilityState(EAbilityState InAbilityState)
 
 void UAbilityComponent::OtherAbilityStart(EAbilityType OtherAbilityType)
 {
-	if(MakeUnavailableAbilityType & static_cast<uint8>(OtherAbilityType))
+	if(MakeUnavailableAbilityTypes & static_cast<uint8>(OtherAbilityType))
 	{
 		SetAbilityState(EAbilityState::EAS_Unavailable);
 	}
@@ -147,7 +125,7 @@ void UAbilityComponent::OtherAbilityStart(EAbilityType OtherAbilityType)
 
 void UAbilityComponent::OtherAbilityEnd(EAbilityType OtherAbilityType)
 {
-	if(MakeUnavailableAbilityType & static_cast<uint8>(OtherAbilityType))
+	if(MakeUnavailableAbilityTypes & static_cast<uint8>(OtherAbilityType))
 	{
 		if(GetOwner()->GetWorldTimerManager().IsTimerActive(CooldownTimerHandle))
 		{
@@ -164,24 +142,24 @@ void UAbilityComponent::PlayAbilityMontage(UAnimMontage* InAbilityMontage)
 {
 	if(nullptr == InAbilityMontage) return;
 	
-	PlayableCharacter->GetMesh()->GetAnimInstance()->Montage_Play(InAbilityMontage);
+	CharacterPlayable->GetMesh()->GetAnimInstance()->Montage_Play(InAbilityMontage);
 }
 
 void UAbilityComponent::PlayAbilityMontage_JumpToSection(UAnimMontage* InAbilityMontage, FName InSectionName)
 {
 	if(nullptr == InAbilityMontage) return;
-	
-	UAnimInstance* AnimInstance = PlayableCharacter->GetMesh()->GetAnimInstance();
+	UE_LOG(LogTemp, Warning, TEXT("Deflect!"));
+	UAnimInstance* AnimInstance = CharacterPlayable->GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(InAbilityMontage);
 	AnimInstance->Montage_JumpToSection(InSectionName, InAbilityMontage);
 }
 
 void UAbilityComponent::StopAbilityMontage(float InBlendOutTime)
 {
-	PlayableCharacter->GetMesh()->GetAnimInstance()->Montage_Stop(InBlendOutTime, AbilityMontage);
+	CharacterPlayable->GetMesh()->GetAnimInstance()->Montage_Stop(InBlendOutTime, AbilityMontage);
 }
 
-void UAbilityComponent::InitializeWidget()
+void UAbilityComponent::InitWidget()
 {
 	SetAbilityState(AbilityState);
 
