@@ -214,14 +214,14 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeCooldownReset()
 
 void UGenjiSwiftStrikeComponent::OnSwiftStrikeColliderBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if(AActor* OverlappedActor = OtherComp->GetOwner())
+	if(AOWCharacterBase* CharacterBase = Cast<AOWCharacterBase>(OtherComp->GetOwner()))
 	{
-		if(OverlappedActors.Find(OverlappedActor) != INDEX_NONE)
+		if(OverlappedActors.Find(CharacterBase) != INDEX_NONE)
 		{
 			return;
 		}
-		OverlappedActors.AddUnique(OverlappedActor);
-		UGameplayStatics::ApplyDamage(OverlappedActor, SwiftStrikeDamage, CharacterPlayable->GetController(), GetOwner(), UDamageType::StaticClass());
+		OverlappedActors.AddUnique(CharacterBase);
+		UGameplayStatics::ApplyDamage(CharacterBase, SwiftStrikeDamage, CharacterPlayable->GetController(), GetOwner(), UDamageType::StaticClass());
 
 		const FVector EffectLocation = OtherComp->GetComponentLocation();
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(OtherComp, SwiftStrikeHitEffect, EffectLocation, FRotator::ZeroRotator);

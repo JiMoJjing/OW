@@ -64,7 +64,7 @@ void UBasicWeaponComponent::UseBasicWeapon(float InPlayRate)
 bool UBasicWeaponComponent::CheckAvailable()
 {
 	bool bAvailable = true;
-	// Check CharacterPlayable Ability Not Active
+	bAvailable &= (CharacterPlayable->GetCurrentAbilityType() == EAbilityType::EAT_None);
 	bAvailable &= !(CharacterPlayable->GetQuickMeleeActive());
 	bAvailable &= !bDelayActive;
 

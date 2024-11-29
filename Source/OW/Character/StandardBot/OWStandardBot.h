@@ -80,6 +80,12 @@ protected:
 	
 	void StandardBotFire();
 
+	FTimerHandle FireModeTimerHandle;
+	
+	void StartStandardBotFireMode();
+
+	void StopStandardBotFireMode();
+
 
 // IOWTriggerAnimNotifyInterface
 public:

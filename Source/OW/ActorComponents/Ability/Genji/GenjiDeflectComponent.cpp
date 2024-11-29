@@ -76,6 +76,16 @@ void UGenjiDeflectComponent::AbilityEnd()
 	CooldownStart();
 }
 
+void UGenjiDeflectComponent::OtherAbilityStart(EAbilityType OtherAbilityType)
+{
+	Super::OtherAbilityStart(OtherAbilityType);
+
+	if(AbilityState == EAbilityState::EAS_Active)
+	{
+		DurationEnd();
+	}
+}
+
 void UGenjiDeflectComponent::DeflectStartSetting()
 {
 	// Collision 활성화

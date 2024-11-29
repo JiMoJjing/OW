@@ -28,6 +28,8 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnAnimNotifyState, float /* DeltaTime */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityStart, EAbilityType /* InAbilityType */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityEnd, EAbilityType /* InAbilityType */);
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUltimateGaugeChanged, float /* MaxUltimateGauge */, float /* CurrentUltimateGauge */);
+
 /**
  * 
  */
@@ -174,6 +176,36 @@ public:
 	FOnAbilityStateChangedDelegateWrapper& GetAbilityStateChangedDelegateWrapper(EAbilityType InAbilityType) { return AbilityStateChangedDelegateWrappers[InAbilityType]; }
 	FOnAbilityCooldownTimeChangedDelegateWrapper& GetAbilityCooldownTimeChangedDelegateWrapper(EAbilityType InAbilityType) { return AbilityCooldownTimeChangedDelegateWrappers[InAbilityType]; }
 	
+
+// Ultimate Ability	
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_Ultimate, meta = (AllowPrivateAccess = "true"))
+	float MaxUltimateGauge;
+
+	UPROPERTY()
+	float CurrentUltimateGauge;
+
+	void AddUltimateGauge(float InAmount);
+
+	UPROPERTY()
+	uint8 bUltimateActive : 1;
+
+	FTimerHandle AutoAddUltimateGaugeTimerHandle;
+
+	void AutoAddUltimateGaugeTimerStart();
+	
+	void AutoAddUltimateGauge();
+	
+public:
+	FOnUltimateGaugeChanged OnUltimateGaugeChanged;
+
+	void SetUltimateActive(bool bActive);
+
+	void UltimateUsed();
+
+	FORCEINLINE bool IsUltimateGaugeFull() const { return FMath::IsNearlyEqual(CurrentUltimateGauge, MaxUltimateGauge); }
+
+	FORCEINLINE bool IsUltimateActive() const { return bUltimateActive; }
 	
 // Widget
 	virtual void InitWidget();

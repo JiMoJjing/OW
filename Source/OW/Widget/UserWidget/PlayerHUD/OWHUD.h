@@ -8,6 +8,8 @@
 #include "OWHUD.generated.h"
 
 
+class UUltimateGaugeWidget;
+class UCancelKeyWidget;
 class UAmmoWidget;
 class UAbilityWidget;
 class UPlayerHPBarWidget;
@@ -66,6 +68,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", BindWidget))
 	TObjectPtr<UAbilityWidget> AbilityTwoWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", BindWidget))
+	TObjectPtr<UUltimateGaugeWidget> UltimateGaugeWidget;
 	
 	UPROPERTY()
 	TMap<EAbilityType, UAbilityWidget*> AbilityWidgets;
@@ -76,4 +81,9 @@ private:
 	TObjectPtr<UAmmoWidget> AmmoWidget;
 
 	void AmmoWidgetUpdate(uint8 InMaxAmmo, uint8 InCurrentAmmo);
+
+
+// CancelKeyWidget
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", BindWidget))
+	TObjectPtr<UCancelKeyWidget> CancelKeyWidget;
 };

@@ -9,7 +9,7 @@
 #include "OW/ActorComponents/Ability/AbilityComponent.h"
 #include "OW/Status/HPComponent.h"
 
-AOWCharacterPlayable::AOWCharacterPlayable() : bQuickMeleeActive(false), CurrentAbilityType(EAbilityType::EAT_None)
+AOWCharacterPlayable::AOWCharacterPlayable() : bQuickMeleeActive(false), CurrentAbilityType(EAbilityType::EAT_None), MaxUltimateGauge(2125.f), CurrentUltimateGauge(0.f), bUltimateActive(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -132,6 +132,7 @@ void AOWCharacterPlayable::PossessedBy(AController* NewController)
 	{
 		OwnerController = PlayerController;
 	}
+	AutoAddUltimateGaugeTimerStart();
 }
 
 void AOWCharacterPlayable::SetIgnoreInput(bool bIgnore)
@@ -181,7 +182,7 @@ void AOWCharacterPlayable::AddAbilityCooldownTimeChangedDelegate(const EAbilityT
 
 void AOWCharacterPlayable::ApplyDamageSuccess(float Damage, bool bIsHeadShot)
 {
-	// ToDo : 궁극기 게이지 상승
+	AddUltimateGauge(Damage);
 }
 
 void AOWCharacterPlayable::KillSuccess()
@@ -292,8 +293,46 @@ void AOWCharacterPlayable::TriggerAnimNotifyState(float DeltaTime)
 	}
 }
 
+void AOWCharacterPlayable::AddUltimateGauge(float InAmount)
+{
+	if(bUltimateActive == false)
+	{
+		CurrentUltimateGauge = FMath::Clamp(CurrentUltimateGauge + InAmount, 0.f, MaxUltimateGauge);
+	}
+
+	if(OnUltimateGaugeChanged.IsBound())
+	{
+		OnUltimateGaugeChanged.Broadcast(MaxUltimateGauge, CurrentUltimateGauge);
+	}
+}
+
+void AOWCharacterPlayable::AutoAddUltimateGaugeTimerStart()
+{
+	GetWorldTimerManager().SetTimer(AutoAddUltimateGaugeTimerHandle, this, &AOWCharacterPlayable::AutoAddUltimateGauge, 1.f, true, 1.f);
+}
+
+void AOWCharacterPlayable::AutoAddUltimateGauge()
+{
+	AddUltimateGauge(5.f);
+}
+
+void AOWCharacterPlayable::SetUltimateActive(bool bActive)
+{
+	bUltimateActive = bActive;
+}
+
+void AOWCharacterPlayable::UltimateUsed()
+{
+	AddUltimateGauge(-MaxUltimateGauge);
+}
+
 void AOWCharacterPlayable::InitWidget()
 {
 	HPComponent->InitializeWidget();
+
+	if(OnUltimateGaugeChanged.IsBound())
+	{
+		OnUltimateGaugeChanged.Broadcast(MaxUltimateGauge, CurrentUltimateGauge);
+	}
 }
 

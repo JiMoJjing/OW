@@ -75,7 +75,7 @@ void UQuickMeleeComponent::UseQuickMelee(float InPlayRate)
 bool UQuickMeleeComponent::CheckAvailable()
 {
 	bool bAvailable = true;
-	// Check CharacterPlayable Ability Not Active
+	bAvailable &= (CharacterPlayable->GetCurrentAbilityType() == EAbilityType::EAT_None);
 	bAvailable &= !bDelayActive;
 
 	return bAvailable;
@@ -113,14 +113,14 @@ void UQuickMeleeComponent::DelayEnd()
 
 void UQuickMeleeComponent::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if(AActor* OverlappedActor = OtherComp->GetOwner())
+	if(AOWCharacterBase* CharacterBase = Cast<AOWCharacterBase>(OtherComp->GetOwner()))
 	{
-		if(OverlappedActors.Find(OverlappedActor) != INDEX_NONE)
+		if(OverlappedActors.Find(CharacterBase) != INDEX_NONE)
 		{
 			return;
 		}
-		OverlappedActors.AddUnique(OverlappedActor);
-		UGameplayStatics::ApplyDamage(OverlappedActor, QuickMeleeDamage, CharacterPlayable->GetController(), GetOwner(), UDamageType::StaticClass());
+		OverlappedActors.AddUnique(CharacterBase);
+		UGameplayStatics::ApplyDamage(CharacterBase, QuickMeleeDamage, CharacterPlayable->GetController(), GetOwner(), UDamageType::StaticClass());
 
 		const FVector EffectLocation = OtherComp->GetComponentLocation();
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(OtherComp, QuickMeleeEffect, EffectLocation, FRotator::ZeroRotator);

@@ -94,16 +94,14 @@ void AOWStandardBot::BeginPlay()
 		FillProjectilePool();
 	}
 
-	if(StandardBotFireMontage)
-	{
-		FTimerHandle TimerHandle;
-		GetWorldTimerManager().SetTimer(TimerHandle, this, &AOWStandardBot::PlayFireMontage, 4.f, true, 2.f);
-	}
+	StartStandardBotFireMode();
 }
 
 void AOWStandardBot::CharacterDeath()
 {
 	Super::CharacterDeath();
+
+	StopStandardBotFireMode();
 
 	SetWidgetComponentVisibility(false);
 	
@@ -115,6 +113,7 @@ void AOWStandardBot::CharacterRevive()
 {
 	Super::CharacterRevive();
 	GetMesh()->GetAnimInstance()->Montage_Play(ReviveAnimMontage);
+	StartStandardBotFireMode();
 }
 
 float AOWStandardBot::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,	AActor* DamageCauser)
@@ -183,6 +182,19 @@ void AOWStandardBot::StandardBotFire()
 			Projectile->ActivateProjectile(RightMuzzle->GetComponentLocation(), ShotDirection);
 		}
 	}
+}
+
+void AOWStandardBot::StartStandardBotFireMode()
+{
+	if(StandardBotFireMontage)
+	{
+		GetWorldTimerManager().SetTimer(FireModeTimerHandle, this, &AOWStandardBot::PlayFireMontage, 4.f, true, 2.f);
+	}
+}
+
+void AOWStandardBot::StopStandardBotFireMode()
+{
+	GetWorldTimerManager().ClearTimer(FireModeTimerHandle);
 }
 
 void AOWStandardBot::TriggerAnimNotify()

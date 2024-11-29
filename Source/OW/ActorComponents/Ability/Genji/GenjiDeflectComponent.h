@@ -27,6 +27,8 @@ private:
 	virtual void AbilityStart() override;
 	virtual void AbilityEnd() override;
 
+	virtual void OtherAbilityStart(EAbilityType OtherAbilityType) override;
+
 	void DeflectStartSetting();
 	void DeflectEndSetting();
 

@@ -8,6 +8,7 @@
 #include "OW/ActorComponents/Ability/Genji/GenjiSwiftStrikeComponent.h"
 #include "OW/ActorComponents/BasicAttack/QuickMeleeComponent.h"
 #include "OW/ActorComponents/BasicAttack/Genji/GenjiShurikenComponent.h"
+#include "OW/ActorComponents/Ultimate/Genji/GenjiDragonbladeComponent.h"
 #include "OW/Collision/OWCollisionProfile.h"
 
 AOWGenji::AOWGenji()
@@ -42,10 +43,11 @@ AOWGenji::AOWGenji()
 
 	GenjiDeflectComponent = CreateDefaultSubobject<UGenjiDeflectComponent>(TEXT("DeflectComponent"));
 
+	GenjiDragonbladeComponent = CreateDefaultSubobject<UGenjiDragonbladeComponent>(TEXT("DragonbladeComponent"));
+
 // For CharacterPlayable	
 	BasicWeaponComponent = GenjiShurikenComponent;
-
-
+	
 		
 // Collision Profile Setting 임시
 	GetCapsuleComponent()->SetCollisionProfileName(OWTEAM1CAPSULE);
@@ -64,6 +66,12 @@ void AOWGenji::BeginPlay()
 
 void AOWGenji::PrimaryFire()
 {
+	if(bUltimateActive && GenjiDragonbladeComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Dragonblade Slash!"));
+		return;
+	}
+	
 	if(GenjiShurikenComponent)
 	{
 		GenjiShurikenComponent->UseBasicWeapon(1.f);
@@ -72,6 +80,12 @@ void AOWGenji::PrimaryFire()
 
 void AOWGenji::SecondaryFire()
 {
+	if(bUltimateActive && GenjiDragonbladeComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Dragonblade Slash!"));
+		return;
+	}
+	
 	if(GenjiShurikenComponent)
 	{
 		GenjiShurikenComponent->UseAltFire(1.f);
@@ -96,10 +110,20 @@ void AOWGenji::AbilityTwo()
 
 void AOWGenji::AbilityThree()
 {
+	if(GenjiDragonbladeComponent)
+	{
+		GenjiDragonbladeComponent->UseUltimate();
+	}
 }
 
 void AOWGenji::QuickMelee()
 {
+	if(bUltimateActive && GenjiDragonbladeComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Dragonblade Slash!"));
+		return;
+	}
+	
 	if(QuickMeleeComponent)
 	{
 		QuickMeleeComponent->UseQuickMelee(1.f);
@@ -108,6 +132,11 @@ void AOWGenji::QuickMelee()
 
 void AOWGenji::Reload()
 {
+	if(bUltimateActive)
+	{
+		return;
+	}
+	
 	if(GenjiShurikenComponent)
 	{
 		GenjiShurikenComponent->UseReload(1.f);

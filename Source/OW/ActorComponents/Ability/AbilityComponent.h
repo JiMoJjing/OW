@@ -103,8 +103,8 @@ protected:
 
 // With AbilityManagerComponent Section
 protected:
-	void OtherAbilityStart(EAbilityType OtherAbilityType);
-	void OtherAbilityEnd(EAbilityType OtherAbilityType);
+	virtual void OtherAbilityStart(EAbilityType OtherAbilityType);
+	virtual void OtherAbilityEnd(EAbilityType OtherAbilityType);
 
 	
 // Reference Caching Section

@@ -5,7 +5,9 @@
 
 #include "AbilityWidget.h"
 #include "AmmoWidget.h"
+#include "CancelKeyWidget.h"
 #include "PlayerHPBarWidget.h"
+#include "UltimateGaugeWidget.h"
 #include "OW/ActorComponents/BasicAttack/BasicWeaponComponent.h"
 #include "OW/Character/OWCharacterPlayable.h"
 #include "OW/Status/HPComponent.h"
@@ -41,15 +43,16 @@ void UOWHUD::BindCharacterDelegate()
 	AOWCharacterPlayable* CharacterPlayable = Cast<AOWCharacterPlayable>(GetOwningPlayerPawn());
 	
 	if(nullptr == CharacterPlayable) return;
+
 	
-	// HPComponent Bind
+	// PlayerHPBarWidget Bind
 	if(UHPComponent* HPComponent = CharacterPlayable->GetHPComponent())
 	{
 		HPComponent->OnHPChanged.AddUObject(this, &UOWHUD::PlayerHPBarUpdate);
 	}
-	
-	// AbilityComponent Bind
 
+	
+	// AbilityWidget Bind
 	if(CharacterPlayable->GetAbilityStateChangedDelegateWrapper(AbilityOneWidget->GetAbilityType()).IsValid())
 	{
 		CharacterPlayable->GetAbilityStateChangedDelegateWrapper(AbilityOneWidget->GetAbilityType()).OnAbilityStateChanged->AddUObject(AbilityOneWidget, &UAbilityWidget::AbilityStateChanged);
@@ -69,11 +72,20 @@ void UOWHUD::BindCharacterDelegate()
 	}
 	
 
-	// Ammo Bind
+	// AmmoWidget Bind
 	if(UBasicWeaponComponent* BasicWeaponComponent = CharacterPlayable->GetBasicWeaponComponent())
 	{
 		BasicWeaponComponent->OnAmmoChanged.AddUObject(this, &UOWHUD::AmmoWidgetUpdate);
 	}
+
+	
+	// CancelKeyWidget Bind
+	if(CharacterPlayable->GetAbilityStateChangedDelegateWrapper(CancelKeyWidget->GetAbilityType()).IsValid())
+	{
+		CharacterPlayable->GetAbilityStateChangedDelegateWrapper(CancelKeyWidget->GetAbilityType()).OnAbilityStateChanged->AddUObject(CancelKeyWidget, &UCancelKeyWidget::AbilityStateChanged);
+	}
+
+	CharacterPlayable->OnUltimateGaugeChanged.AddUObject(UltimateGaugeWidget, &UUltimateGaugeWidget::OnUltimateGaugeChanged);
 	
 	CharacterPlayable->InitWidget();
 }
