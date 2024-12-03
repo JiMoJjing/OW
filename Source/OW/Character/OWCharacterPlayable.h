@@ -48,8 +48,50 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;
 
+public:
+	void SetIgnoreInput(bool bIgnore);
+
+	virtual void ApplyDamageSuccess(float Damage, bool bIsHeadShot) override;
+	virtual void KillSuccess() override;
+
+	virtual bool TraceUnderCrosshair(const float TraceDistance, FHitResult& OutHitResult, FVector& OutHitLocation, const ECollisionChannel InCollisionChannel) override;
+	virtual void GetDirectionToCrosshair(const FVector& StartLocation, FVector& OutDirection, const ECollisionChannel InCollisionChannel) override;
+
+	virtual void TriggerAnimNotify() override;
+	virtual void TriggerAnimNotifyBegin() override;
+	virtual void TriggerAnimNotifyEnd() override;
+	virtual void TriggerAnimNotifyState(float DeltaTime) override;
 	
-// View Section
+	UBasicWeaponComponent* GetBasicWeaponComponent() { return BasicWeaponComponent; }
+	UQuickMeleeComponent* GetQuickMeleeComponent() { return QuickMeleeComponent; }
+	FORCEINLINE bool GetQuickMeleeActive() const { return bQuickMeleeActive; }
+	void SetQuickMeleeActive(bool bActive);
+	
+	void AbilityStart(EAbilityType InAbilityType);
+	void AbilityEnd(EAbilityType InAbilityType);
+	
+	FORCEINLINE EAbilityType GetCurrentAbilityType() const { return CurrentAbilityType; }
+	
+	void AddAbilityStateChangedDelegate(const EAbilityType InAbilityType, const FOnAbilityStateChangedDelegateWrapper& InDelegateWrapper);
+	void AddAbilityCooldownTimeChangedDelegate(const EAbilityType InAbilityType, const FOnAbilityCooldownTimeChangedDelegateWrapper& InDelegateWrapper);
+
+	FOnAbilityStateChangedDelegateWrapper& GetAbilityStateChangedDelegateWrapper(EAbilityType InAbilityType) { return AbilityStateChangedDelegateWrappers[InAbilityType]; }
+	FOnAbilityCooldownTimeChangedDelegateWrapper& GetAbilityCooldownTimeChangedDelegateWrapper(EAbilityType InAbilityType) { return AbilityCooldownTimeChangedDelegateWrappers[InAbilityType]; }
+
+protected:
+	void AddUltimateGauge(float InAmount);
+	void AutoAddUltimateGaugeTimerStart();
+	void AutoAddUltimateGauge();
+
+public:
+	void SetUltimateActive(bool bActive);
+	void UltimateUsed();
+
+	FORCEINLINE bool IsUltimateGaugeFull() const { return FMath::IsNearlyEqual(CurrentUltimateGauge, MaxUltimateGauge); }
+	FORCEINLINE bool IsUltimateActive() const { return bUltimateActive; }
+
+	virtual void InitWidget();
+	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> SpringArmComponent;
@@ -57,9 +99,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> CameraComponent;
 
-	
-// Collision Section
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> UpperArmLCollision;
 	
@@ -89,124 +128,44 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> FootRCollision;
-	
-	
-// Input Section
-public:
-	void SetIgnoreInput(bool bIgnore);
 
-	
-// Controller Reference Caching
-protected:
 	UPROPERTY()
 	TObjectPtr<APlayerController> OwnerController;
 
-	
-// IOWApplyDamageInterface
-public:
-	virtual void ApplyDamageSuccess(float Damage, bool bIsHeadShot) override;
-	virtual void KillSuccess() override;
-
-	
-// IOWPlayerTraceInterface
-	virtual bool TraceUnderCrosshair(const float TraceDistance, FHitResult& OutHitResult, FVector& OutHitLocation, const ECollisionChannel InCollisionChannel) override;
-	virtual void GetDirectionToCrosshair(const FVector& StartLocation, FVector& OutDirection, const ECollisionChannel InCollisionChannel) override;
-	
-	
-// IOWTriggerAnimNotifyInterface
-	virtual void TriggerAnimNotify() override;
-	virtual void TriggerAnimNotifyBegin() override;
-	virtual void TriggerAnimNotifyEnd() override;
-	virtual void TriggerAnimNotifyState(float DeltaTime) override;
-
-	
-// AnimNotify Trigger DELEGATE
-	FOnAnimNotify OnAnimNotify;
-	FOnAnimNotifyBegin OnAnimNotifyBegin;
-	FOnAnimNotifyEnd OnAnimNotifyEnd;
-	FOnAnimNotifyState OnAnimNotifyState;
-
-	
-// BasicWeaponComponent Section
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = BasicWeapon, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBasicWeaponComponent> BasicWeaponComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = QuickMelee, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UQuickMeleeComponent> QuickMeleeComponent;
 
-	UPROPERTY()
 	uint8 bQuickMeleeActive : 1;
-	
-public:
-	UBasicWeaponComponent* GetBasicWeaponComponent() { return BasicWeaponComponent; }
 
-	UQuickMeleeComponent* GetQuickMeleeComponent() { return QuickMeleeComponent; }
-
-	FORCEINLINE bool GetQuickMeleeActive() const { return bQuickMeleeActive; }
-	
-	void SetQuickMeleeActive(bool bActive);
-	
-	
-// Ability Section
-	FOnAbilityStart OnAbilityStart;
-	FOnAbilityEnd OnAbilityEnd;
-
-	void AbilityStart(EAbilityType InAbilityType);
-	void AbilityEnd(EAbilityType InAbilityType);
-
-	FORCEINLINE EAbilityType GetCurrentAbilityType() const { return CurrentAbilityType; }
-	
-protected:
 	EAbilityType CurrentAbilityType;
-	
-	
-// Ability Delegate Wrappers
-protected:
+
 	UPROPERTY()
 	TMap<EAbilityType, FOnAbilityStateChangedDelegateWrapper> AbilityStateChangedDelegateWrappers;
 
 	UPROPERTY()
 	TMap<EAbilityType, FOnAbilityCooldownTimeChangedDelegateWrapper> AbilityCooldownTimeChangedDelegateWrappers;
 
-public:
-	void AddAbilityStateChangedDelegate(const EAbilityType InAbilityType, const FOnAbilityStateChangedDelegateWrapper& InDelegateWrapper);
-	void AddAbilityCooldownTimeChangedDelegate(const EAbilityType InAbilityType, const FOnAbilityCooldownTimeChangedDelegateWrapper& InDelegateWrapper);
-
-	FOnAbilityStateChangedDelegateWrapper& GetAbilityStateChangedDelegateWrapper(EAbilityType InAbilityType) { return AbilityStateChangedDelegateWrappers[InAbilityType]; }
-	FOnAbilityCooldownTimeChangedDelegateWrapper& GetAbilityCooldownTimeChangedDelegateWrapper(EAbilityType InAbilityType) { return AbilityCooldownTimeChangedDelegateWrappers[InAbilityType]; }
-	
-
-// Ultimate Ability	
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_Ultimate, meta = (AllowPrivateAccess = "true"))
 	float MaxUltimateGauge;
 
 	UPROPERTY()
 	float CurrentUltimateGauge;
-
-	void AddUltimateGauge(float InAmount);
-
-	UPROPERTY()
+	
 	uint8 bUltimateActive : 1;
 
 	FTimerHandle AutoAddUltimateGaugeTimerHandle;
-
-	void AutoAddUltimateGaugeTimerStart();
-	
-	void AutoAddUltimateGauge();
 	
 public:
-	FOnUltimateGaugeChanged OnUltimateGaugeChanged;
-
-	void SetUltimateActive(bool bActive);
-
-	void UltimateUsed();
-
-	FORCEINLINE bool IsUltimateGaugeFull() const { return FMath::IsNearlyEqual(CurrentUltimateGauge, MaxUltimateGauge); }
-
-	FORCEINLINE bool IsUltimateActive() const { return bUltimateActive; }
+	FOnAnimNotify OnAnimNotify;
+	FOnAnimNotifyBegin OnAnimNotifyBegin;
+	FOnAnimNotifyEnd OnAnimNotifyEnd;
+	FOnAnimNotifyState OnAnimNotifyState;
 	
-// Widget
-	virtual void InitWidget();
+	FOnAbilityStart OnAbilityStart;
+	FOnAbilityEnd OnAbilityEnd;
+	
+	FOnUltimateGaugeChanged OnUltimateGaugeChanged;
 };

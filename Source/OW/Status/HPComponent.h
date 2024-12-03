@@ -23,25 +23,20 @@ protected:
 public:
 	void SetMaxHP(float InMaxHP) { MaxHP = InMaxHP; }
 	FORCEINLINE float GetMaxHP() { return MaxHP;}
-
+	
+	float TakeDamage(float InDamage);
+	void InitializeWidget();
+	bool IsDead();
+	void HPFullRecovery();
+	
 private:
 	void SetCurrentHP(float InHP);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = HPComponent, meta = (AllowPrivateAccess = "true"))
 	float MaxHP;
-
-	UPROPERTY()
+	
 	float CurrentHP;
 
 public:
-	float TakeDamage(float InDamage);
-
-	void InitializeWidget();
-	
-	bool IsDead();
-
-	void HPFullRecovery();
-	
-// DELEGATE
 	FOnHPChanged OnHPChanged;
 };

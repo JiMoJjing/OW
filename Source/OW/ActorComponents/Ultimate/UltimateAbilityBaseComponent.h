@@ -46,6 +46,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = QuickMelee, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> UltimateMontage;
 
-	void PlayUltimateMontage();
+	void PlayUltimateMontage(UAnimMontage* Montage);
 
 };

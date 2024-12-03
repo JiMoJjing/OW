@@ -36,7 +36,6 @@ protected:
 	void SetCooldownState();
 	void SetUnavailableState();
 
-protected:
 	UPROPERTY(meta = (AllowPrivateAccess = "true", BindWidget))
 	TObjectPtr<UImage> BackgroundImage;
 

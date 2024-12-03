@@ -14,6 +14,7 @@ UOWAnimInstance::UOWAnimInstance()
 	bIsIdle = true;
 	bIsFalling = false;
 	bIsJumping = bIsFalling & (Velocity.Z > JumpingThreshold);
+	bIsMontagePlaying = false;
 }
 
 void UOWAnimInstance::NativeInitializeAnimation()
@@ -42,7 +43,8 @@ void UOWAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsFalling = MovementComponent->IsFalling();
 		bIsIdle = GroundSpeed < MovingThreshold;
 		bIsJumping = bIsFalling & (Velocity.Z > JumpingThreshold);
-
+		JumpCurrentCount = OwnerCharacter->JumpCurrentCount;
+		bIsMontagePlaying = IsAnyMontagePlaying();
 		if(bIsIdle)
 		{
 			MoveDirection = 0.f;

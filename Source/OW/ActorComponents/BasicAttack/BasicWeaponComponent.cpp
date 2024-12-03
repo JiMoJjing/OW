@@ -122,11 +122,6 @@ void UBasicWeaponComponent::AmmoChanged()
 	}
 }
 
-void UBasicWeaponComponent::InitWidget()
-{
-	AmmoChanged();
-}
-
 void UBasicWeaponComponent::PlayReloadMontage(float InPlayRate)
 {
 	if(ReloadMontage)
@@ -138,6 +133,11 @@ void UBasicWeaponComponent::PlayReloadMontage(float InPlayRate)
 void UBasicWeaponComponent::Reload()
 {
 	CurrentAmmo = MaxAmmo;
+	AmmoChanged();
+}
+
+void UBasicWeaponComponent::InitWidget()
+{
 	AmmoChanged();
 }
 

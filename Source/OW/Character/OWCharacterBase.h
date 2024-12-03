@@ -27,30 +27,34 @@ public:
 	UHPComponent* GetHPComponent() { return HPComponent; }
 	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character_HP, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UHPComponent> HPComponent;
-	
 	virtual void CharacterDeath();
 	virtual void CharacterRevive();
 
-// Initial Variable	
 	UPROPERTY()
 	FVector MeshRelativeLocation;
 
 	UPROPERTY()
 	FRotator MeshRelativeRotation;
 
+	void SetMeshCollisionEnabled(ECollisionEnabled::Type InType);
+	void SetMeshCollisionProfileName(FName InCollisionProfileName);
 
-// Collision Section
+public:
+	void SetMaxWalkSpeedByMultiplier(float InMultiplier);
+	void SetMaxWalkSpeedToDefault();
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character_HP, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UHPComponent> HPComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> BodyCollision;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterCollision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> HeadCollision;
 
-	UPROPERTY()
-	TArray<UCapsuleComponent*> CollisionArray;
-
-	void SetMeshCollisionEnabled(ECollisionEnabled::Type InType);
-	void SetMeshCollisionProfileName(FName InCollisionProfileName);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Genji, meta = (AllowPrivateAccess = true))
+	float DefaultMaxWalkSpeed;
+	
+	TArray<TObjectPtr<UShapeComponent>> CollisionArray;
 };

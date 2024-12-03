@@ -25,14 +25,11 @@ public:
 
 private:
 	void AltFire();
-	
-private:
+	void PlayAltFireMontage(float InPlayRate);
+	virtual void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted) override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Genji_Shuriken, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> AltFireMontage;
-
-	void PlayAltFireMontage(float InPlayRate);
-
-	virtual void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Genji_Shuriken, meta = (AllowPrivateAccess = "true"))
 	float AltFireDelayTime;

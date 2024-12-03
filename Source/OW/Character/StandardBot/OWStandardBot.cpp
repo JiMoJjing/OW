@@ -4,12 +4,13 @@
 #include "OWStandardBot.h"
 
 #include "Components/CapsuleComponent.h"
+#include "OW/ActorComponents/BasicAttack/ProjectileWeaponComponent.h"
 #include "OW/Collision/OWCollisionProfile.h"
 #include "OW/Projectile/OWProjectileBase.h"
 #include "OW/Widget/WidgetComponent/HPBarWidgetComponent.h"
 
 
-AOWStandardBot::AOWStandardBot() : PoolSize(20), PoolIndex(0)
+AOWStandardBot::AOWStandardBot() : bMuzzleChange(true)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	
@@ -49,25 +50,14 @@ AOWStandardBot::AOWStandardBot() : PoolSize(20), PoolIndex(0)
 	ArmLCollision->SetupAttachment(GetMesh(), TEXT("Arm_L"));
 	ArmRCollision->SetupAttachment(GetMesh(), TEXT("Arm_R"));
 	LegCollision->SetupAttachment(GetMesh(), TEXT("Leg"));
-	
-	CollisionArray.AddUnique(ArmLCollision);
-	CollisionArray.AddUnique(ArmRCollision);
-	CollisionArray.AddUnique(LegCollision);
-	
-	GetCapsuleComponent()->SetCollisionProfileName(OWTEAM2CAPSULE);
-	SetMeshCollisionProfileName(OWTEAM2MESH);
-
-	static ConstructorHelpers::FClassFinder<AOWProjectileBase> StandardBotProjectileClassRef(TEXT("/Game/OW/StandardBot/Blueprint/BP_StandardBot_Projectile.BP_StandardBot_Projectile_C"));
-	if(StandardBotProjectileClassRef.Class)
-	{
-		StandardBotProjectileClass = StandardBotProjectileClassRef.Class;
-	}
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> StandardBotFireMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/OW/StandardBot/AnimMontage/AM_StandardBot_Fire.AM_StandardBot_Fire'"));
 	if(StandardBotFireMontageRef.Object)
 	{
 		StandardBotFireMontage = StandardBotFireMontageRef.Object;
 	}
+
+	ProjectileWeaponComponent = CreateDefaultSubobject<UProjectileWeaponComponent>(TEXT("ProjectileWeaponComponent"));
 
 	LeftMuzzle = CreateDefaultSubobject<USceneComponent>(TEXT("LeftMuzzle"));
 	RightMuzzle = CreateDefaultSubobject<USceneComponent>(TEXT("RightMuzzle"));
@@ -78,6 +68,13 @@ AOWStandardBot::AOWStandardBot() : PoolSize(20), PoolIndex(0)
 void AOWStandardBot::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
+	CollisionArray.AddUnique(ArmLCollision);
+	CollisionArray.AddUnique(ArmRCollision);
+	CollisionArray.AddUnique(LegCollision);
+		
+	GetCapsuleComponent()->SetCollisionProfileName(OWTEAM2CAPSULE);
+	SetMeshCollisionProfileName(OWTEAM2MESH);
 }
 
 void AOWStandardBot::BeginPlay()
@@ -89,22 +86,14 @@ void AOWStandardBot::BeginPlay()
 		HPBarWidgetComponent->SetNameText(FText::FromName(TEXT("Standard Bot")));
 		SetWidgetComponentVisibility(false);
 	}
-	if(StandardBotProjectileClass)
-	{
-		FillProjectilePool();
-	}
-
-	StartStandardBotFireMode();
 }
 
 void AOWStandardBot::CharacterDeath()
 {
 	Super::CharacterDeath();
 
-	StopStandardBotFireMode();
-
 	SetWidgetComponentVisibility(false);
-	
+
 	FTimerHandle ReviveTimerHandle;
 	GetWorldTimerManager().SetTimer(ReviveTimerHandle, this, &AOWStandardBot::CharacterRevive, 5.f, false);
 }
@@ -113,7 +102,6 @@ void AOWStandardBot::CharacterRevive()
 {
 	Super::CharacterRevive();
 	GetMesh()->GetAnimInstance()->Montage_Play(ReviveAnimMontage);
-	StartStandardBotFireMode();
 }
 
 float AOWStandardBot::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,	AActor* DamageCauser)
@@ -127,40 +115,6 @@ void AOWStandardBot::SetWidgetComponentVisibility(bool bNewVisibility)
 	HPBarWidgetComponent->SetVisibility(bNewVisibility);
 }
 
-void AOWStandardBot::FillProjectilePool()
-{
-	UWorld* World = GetWorld();
-	if(nullptr == World) return;
-
-	FActorSpawnParameters ActorSpawnParameters;
-	ActorSpawnParameters.Owner = this;
-	ActorSpawnParameters.Instigator = this;
-	const FVector SpawnLocation = FVector::ZeroVector;
-	const FRotator SpawnRotation = FRotator::ZeroRotator;
-	
-	for(int index = 0; index < PoolSize; index++)
-	{
-		if(AOWProjectileBase* ProjectileBase = World->SpawnActor<AOWProjectileBase>(StandardBotProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParameters))
-		{
-			ProjectileBase->SetCollisionProfile(OWTEAM2HIT);
-			ProjectilePool.Add(ProjectileBase);
-		}
-	}
-}
-
-TObjectPtr<AOWProjectileBase> AOWStandardBot::GetProjectileFromPool()
-{
-	if(ProjectilePool.IsEmpty())
-	{
-		return nullptr;
-	}
-	
-	PoolIndex %= PoolSize;
-	AOWProjectileBase* ProjectileBase = ProjectilePool[PoolIndex++];
-	
-	return ProjectileBase;
-}
-
 void AOWStandardBot::PlayFireMontage()
 {
 	GetMesh()->GetAnimInstance()->Montage_Play(StandardBotFireMontage);
@@ -169,11 +123,11 @@ void AOWStandardBot::PlayFireMontage()
 void AOWStandardBot::StandardBotFire()
 {
 	FVector ShotDirection = GetActorForwardVector();
-	AOWProjectileBase* Projectile = GetProjectileFromPool();
+	AOWProjectileBase* Projectile = ProjectileWeaponComponent->GetProjectileFromPool();
 
 	if(Projectile)
 	{
-		if(PoolIndex % 2 == 1)
+		if(bMuzzleChange & true)
 		{
 			Projectile->ActivateProjectile(LeftMuzzle->GetComponentLocation(), ShotDirection);
 		}
@@ -181,20 +135,8 @@ void AOWStandardBot::StandardBotFire()
 		{
 			Projectile->ActivateProjectile(RightMuzzle->GetComponentLocation(), ShotDirection);
 		}
+		bMuzzleChange = !bMuzzleChange;
 	}
-}
-
-void AOWStandardBot::StartStandardBotFireMode()
-{
-	if(StandardBotFireMontage)
-	{
-		GetWorldTimerManager().SetTimer(FireModeTimerHandle, this, &AOWStandardBot::PlayFireMontage, 4.f, true, 2.f);
-	}
-}
-
-void AOWStandardBot::StopStandardBotFireMode()
-{
-	GetWorldTimerManager().ClearTimer(FireModeTimerHandle);
 }
 
 void AOWStandardBot::TriggerAnimNotify()

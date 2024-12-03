@@ -8,6 +8,7 @@
 #include "OWStandardBot.generated.h"
 
 
+class UProjectileWeaponComponent;
 class AOWProjectileBase;
 class UHPBarWidgetComponent;
 
@@ -18,28 +19,24 @@ class OW_API AOWStandardBot : public AOWCharacterBase, public IOWTriggerAnimNoti
 
 public:
 	AOWStandardBot();
-
 	virtual void PostInitializeComponents() override;
-
+	
 protected:
 	virtual void BeginPlay() override;
-
 	virtual void CharacterDeath() override;
 	virtual void CharacterRevive() override;
-
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-
-// WidgetComponent
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = StandardBot_WidgetComponent, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UHPBarWidgetComponent> HPBarWidgetComponent;
-
 	void SetWidgetComponentVisibility(bool bNewVisibility);
-	
-// AnimMontage
-	UPROPERTY()
-	TObjectPtr<UAnimMontage> ReviveAnimMontage;
+	void PlayFireMontage();
+	void StandardBotFire();
 
-// Collision Section	
+public:
+	virtual void TriggerAnimNotify() override;
+	virtual void TriggerAnimNotifyBegin() override;
+	virtual void TriggerAnimNotifyEnd() override;
+	virtual void TriggerAnimNotifyState(float Delta) override;;
+
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = StandardBot_Collision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> ArmLCollision;
 
@@ -48,49 +45,24 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = StandardBot_Collision, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> LegCollision;
-
-
-// Attack Section
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = StandardBot_AnimMontage, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> ReviveAnimMontage;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = StandardBot_WidgetComponent, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UHPBarWidgetComponent> HPBarWidgetComponent;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = StandardBot_Projectile, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UProjectileWeaponComponent> ProjectileWeaponComponent;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = StandardBot_Projectile, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USceneComponent> LeftMuzzle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = StandardBot_Projectile, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USceneComponent> RightMuzzle;
-
-	UPROPERTY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = StandardBot_AnimMontage, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> StandardBotFireMontage;
-	
-	UPROPERTY()
-	TSubclassOf<AOWProjectileBase> StandardBotProjectileClass;
 
-	UPROPERTY()
-	TArray<TObjectPtr<AOWProjectileBase>> ProjectilePool;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = StandardBot_Projectile, meta = (AllowPrivateAccess = "true"))
-	uint8 PoolSize;
-
-	UPROPERTY()
-	uint8 PoolIndex;
-	
-	void FillProjectilePool();
-
-	TObjectPtr<AOWProjectileBase> GetProjectileFromPool();
-
-	void PlayFireMontage();
-	
-	void StandardBotFire();
-
-	FTimerHandle FireModeTimerHandle;
-	
-	void StartStandardBotFireMode();
-
-	void StopStandardBotFireMode();
-
-
-// IOWTriggerAnimNotifyInterface
-public:
-	virtual void TriggerAnimNotify() override;
-	virtual void TriggerAnimNotifyBegin() override;
-	virtual void TriggerAnimNotifyEnd() override;
-	virtual void TriggerAnimNotifyState(float Delta) override;;
+	uint8 bMuzzleChange : 1;
 };

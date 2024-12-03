@@ -26,23 +26,21 @@ public:
 protected:
 	virtual void Fire() override;
 
-	
-// Projectile Section
+public:
+	TObjectPtr<AOWProjectileBase> GetProjectileFromPool();
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = BasicWeapon_Projectile, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AOWProjectileBase> ProjectileClass;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = BasicWeapon_Projectile, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = BasicWeapon_Projectile, meta = (AllowPrivateAccess = "true"))
 	uint8 PoolSize;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = BasicWeapon_Projectile, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = BasicWeapon_Projectile, meta = (AllowPrivateAccess = "true"))
 	uint8 ExtraPoolSize;
 	
 	UPROPERTY()
 	TArray<TObjectPtr<AOWProjectileBase>> ProjectilePool;
-	
-	UPROPERTY()
+
 	uint8 PoolIndex;
-	
-	TObjectPtr<AOWProjectileBase> GetProjectileFromPool();
 };

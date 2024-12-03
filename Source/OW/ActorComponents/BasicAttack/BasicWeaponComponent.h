@@ -29,16 +29,32 @@ protected:
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-// Use Function
-public:
 	void UseBasicWeapon(float InPlayRate);
 
 protected:
 	bool CheckAvailable();
 
 	virtual void Fire();
-	
-// Caching Section	
+
+	void PlayBasicWeaponMontage(float InPlayRate);
+
+	UFUNCTION()
+	virtual void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
+
+	void DelayStart(float InDelayTime);
+	void DelayEnd();
+
+	bool CheckAmmo();
+	void UseAmmo(uint8 InAmount);
+	void AmmoChanged();
+
+	void PlayReloadMontage(float InPlayRate);
+	void Reload();
+
+public:
+	void InitWidget();
+	void UseReload(float InPlayRate);
+
 protected:
 	UPROPERTY()
 	TObjectPtr<AOWCharacterPlayable> CharacterPlayable;
@@ -48,67 +64,28 @@ protected:
 
 	UPROPERTY()
 	TScriptInterface<IOWTriggerAnimNotifyInterface> TriggerAnimNotifyInterface;
-
 	
-// AnimMontage Section
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = BasicWeapon, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> BasicWeaponMontage;
 
-	void PlayBasicWeaponMontage(float InPlayRate);
-
-	UFUNCTION()
-	virtual void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
-
-	
-// Delay Section
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = BasicWeapon, meta = (AllowPrivateAccess = "true"))
 	float DelayTime;
-	
-	UPROPERTY()
+
 	FTimerHandle DelayTimerHandle;
 
-	UPROPERTY()
 	uint8 bDelayActive : 1;
 
-	void DelayStart(float InDelayTime);
-	void DelayEnd();
-	
-
-// Ammo Section
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = BasicWeapon, meta = (AllowPrivateAccess = "true"))
 	uint8 MaxAmmo;
-
-	UPROPERTY()
+	
 	uint8 CurrentAmmo;
 
-	bool CheckAmmo();
-
-	void UseAmmo(uint8 InAmount);
-
-	void AmmoChanged();
-	
-public:
-	FOnAmmoChanged OnAmmoChanged;
-
-	void InitWidget();
-
-
-// Reload Section
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = BasicWeapon, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> ReloadMontage;
-
-	void PlayReloadMontage(float InPlayRate);
-
-	void Reload();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = BasicWeapon, meta = (AllowPrivateAccess = "true"))
 	float ReloadDelayTime;
 	
 public:
-	void UseReload(float InPlayRate);
-	
+	FOnAmmoChanged OnAmmoChanged;
 };

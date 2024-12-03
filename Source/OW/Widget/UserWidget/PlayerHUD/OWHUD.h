@@ -21,47 +21,31 @@ class OW_API UOWHUD : public UUserWidget
 
 	UOWHUD(const FObjectInitializer& ObjectInitializer);
 
-
 protected:
 	virtual void NativeConstruct() override;
-
-
-// Bind Character Delegate
+	
+	void PlayerHPBarUpdate(float InMaxHP, float InCurrentHP);
+	void AmmoWidgetUpdate(uint8 InMaxAmmo, uint8 InCurrentAmmo);
+	
 public:
 	void BindCharacterDelegate();
+	void CreateHitMarker(bool bIsHeadShot);
 
-
-// PlayerHPBar
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", BindWidget))
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = OWHUD, meta = (AllowPrivateAccess = "true", BindWidget))
 	TObjectPtr<UPlayerHPBarWidget> PlayerHPBar; 
 
-public:
-	void PlayerHPBarUpdate(float InMaxHP, float InCurrentHP);
-
-
-// Crosshair
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", BindWidget))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = OWHUD, meta = (AllowPrivateAccess = "true", BindWidget))
 	TObjectPtr<UUserWidget> Crosshair;
-	
-	
-// HitMarker	
-private:
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> HeadShotHitMarker;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> NormalHitMarker;
 
-	UPROPERTY()
 	FVector2D HitMarkerPositionOffset;
 
-public:
-	void CreateHitMarker(bool bIsHeadShot);
-
-
-// Ability Widget
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", BindWidget))
 	TObjectPtr<UAbilityWidget> AbilityOneWidget;
@@ -71,19 +55,12 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", BindWidget))
 	TObjectPtr<UUltimateGaugeWidget> UltimateGaugeWidget;
-	
-	UPROPERTY()
+
 	TMap<EAbilityType, UAbilityWidget*> AbilityWidgets;
 
-	
-// Ammo Widget
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", BindWidget))
 	TObjectPtr<UAmmoWidget> AmmoWidget;
 
-	void AmmoWidgetUpdate(uint8 InMaxAmmo, uint8 InCurrentAmmo);
-
-
-// CancelKeyWidget
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", BindWidget))
 	TObjectPtr<UCancelKeyWidget> CancelKeyWidget;
 };

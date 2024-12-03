@@ -62,10 +62,10 @@ void UUltimateAbilityBaseComponent::EndUltimate()
 	CharacterPlayable->AbilityEnd(EAbilityType::EAT_AbilityThree);
 }
 
-void UUltimateAbilityBaseComponent::PlayUltimateMontage()
+void UUltimateAbilityBaseComponent::PlayUltimateMontage(UAnimMontage* Montage)
 {
-	if(UltimateMontage)
+	if(Montage)
 	{
-		CharacterPlayable->GetMesh()->GetAnimInstance()->Montage_Play(UltimateMontage);
+		CharacterPlayable->GetMesh()->GetAnimInstance()->Montage_Play(Montage);
 	}
 }

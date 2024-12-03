@@ -7,6 +7,7 @@
 #include "GenjiSwiftStrikeComponent.generated.h"
 
 
+class AOWGenji;
 class UNiagaraSystem;
 class USphereComponent;
 
@@ -17,7 +18,6 @@ class OW_API UGenjiSwiftStrikeComponent : public UAbilityComponent
 
 public:
 	UGenjiSwiftStrikeComponent();
-
 	virtual void InitializeComponent() override;
 
 protected:
@@ -26,12 +26,10 @@ protected:
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-// Ability Function Override	
 private:
 	virtual void AbilityStart() override;
 	virtual void AbilityEnd() override;
 
-// SwiftStrike Function	Section
 	void SwiftStrikeStartSetting();
 	void SwiftStrikeEndSetting();
 
@@ -43,11 +41,16 @@ private:
 	UFUNCTION()
 	void OnCapsuleComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
+	UFUNCTION()
+	void OnSwiftStrikeColliderBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 public:
 	void SwiftStrikeCooldownReset(); 
 
 private:
-// SwiftStrike Variable Section	
+	UPROPERTY()
+	TObjectPtr<AOWGenji> GenjiRef;
+
 	float SwiftStrikeDistance;
 	float SwiftStrikeSpeed;
 
@@ -58,28 +61,21 @@ private:
 	float HitNormalProjectionInterpSpeed;
 
 	uint8 bCheckDoubleJump : 1;
-
 	uint8 bSwiftStrikeCooldownReset : 1;
 
-	
-// CapsuleSize
 	FVector2D CapsuleSize2D;
 
-// Damage
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_SwiftStrike, meta = (AllowPrivateAccess = "true"))
 	float SwiftStrikeDamage;
 
-
-// Collider
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability_SwiftStrike, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_SwiftStrike, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USphereComponent> SwiftStrikeCollider;
-
-	UFUNCTION()
-	void OnSwiftStrikeColliderBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	TArray<TObjectPtr<AActor>> OverlappedActors;
 
-// Niagara
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability_SwiftStrike, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_SwiftStrike, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UNiagaraSystem> SwiftStrikeHitEffect;
+
+	FName DragonbladeStartSectionName;
+	FName DragonbladeEndSectionName;
 };

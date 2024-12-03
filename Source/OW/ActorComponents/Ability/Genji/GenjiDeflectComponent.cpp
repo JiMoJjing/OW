@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "OW/Collision/OWCollisionProfile.h"
 #include "OW/Character/OWCharacterPlayable.h"
+#include "OW/Character/Genji/OWGenji.h"
 #include "OW/Projectile/OWProjectileBase.h"
 #include "OW/Interface/OWPlayerTraceInterface.h"
 
@@ -30,6 +31,11 @@ UGenjiDeflectComponent::UGenjiDeflectComponent() : DeflectMontageSectionIndex(0)
 	DeflectMontageSection.Add(2, TEXT("Section_02"));
 	DeflectMontageSection.Add(3, TEXT("Section_03"));
 
+	DeflectMontageSection.Add(4, TEXT("Section_04"));
+	DeflectMontageSection.Add(5, TEXT("Section_05"));
+	DeflectMontageSection.Add(6, TEXT("Section_06"));
+	DeflectMontageSection.Add(7, TEXT("Section_07"));
+
 	CooldownTime = 8.f;
 	DurationTime = 2.f;
 
@@ -49,6 +55,11 @@ void UGenjiDeflectComponent::InitializeComponent()
 	{
 		DeflectBoxComponent->AttachToComponent(CharacterPlayable->GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		DeflectBoxComponent->SetRelativeLocation(FVector(64.f, 0.f, 0.f));
+	}
+
+	if(AOWGenji* Genji = Cast<AOWGenji>(GetOwner()))
+	{
+		GenjiRef = Genji;
 	}
 }
 
@@ -131,8 +142,15 @@ void UGenjiDeflectComponent::OnDeflectBoxBeginOverlap(UPrimitiveComponent* Overl
 		SpawnedProjectile->SetCollisionProfile(OWTEAM1HIT);
 		SpawnedProjectile->FinishSpawning(SpawnedProjectile->GetTransform(), true);
 		SpawnedProjectile->ActivateProjectile(StartLocation, DirectionVector);
-		
-		PlayAbilityMontage_JumpToSection(AbilityMontage, DeflectMontageSection[DeflectMontageSectionIndex++]);
+
+		if(GenjiRef->IsUltimateActive())
+		{
+			PlayAbilityMontage_JumpToSection(AbilityMontage, DeflectMontageSection[DeflectMontageSectionIndex++ + 4]);
+		}
+		else
+		{
+			PlayAbilityMontage_JumpToSection(AbilityMontage, DeflectMontageSection[DeflectMontageSectionIndex++]);
+		}
 		DeflectMontageSectionIndex %= 4;
 	}
 }

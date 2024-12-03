@@ -56,7 +56,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-// Ability Function
 public:
 	void UseAbility();
 
@@ -65,25 +64,31 @@ protected:
 	
 	virtual void AbilityStart();
 	virtual void AbilityEnd();
-
-
-// Cooldown Section
+	
 	void CooldownStart();
 	virtual void CooldownEnd();
 	void CooldownTick();
 	
-	UPROPERTY()
-	FTimerHandle CooldownTimerHandle;
+	void SetAbilityState(EAbilityState InAbilityState);
 
+	virtual void OtherAbilityStart(EAbilityType OtherAbilityType);
+	virtual void OtherAbilityEnd(EAbilityType OtherAbilityType);
+
+	void PlayAbilityMontage(UAnimMontage* InAbilityMontage);
+	void PlayAbilityMontage_JumpToSection(UAnimMontage* InAbilityMontage, FName InSectionName);
+	void StopAbilityMontage(float InBlendOutTime);
+
+public:
+	void InitWidget();
+
+protected:
+	FTimerHandle CooldownTimerHandle;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_Cooldown, meta = (AllowPrivateAccess = "true"))
 	float CooldownTime;
 
-	UPROPERTY()
 	float CurrentCooldownTime;
 
-	
-// AbilityType Section
-	UPROPERTY()
 	EAbilityType AbilityType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true, BitMask, BitMaskEnum = "/Script/OW.EAbilityType"))
@@ -91,44 +96,17 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true, BitMask, BitMaskEnum = "/Script/OW.EAbilityType"))
 	uint8 MakeUnavailableAbilityTypes = 0;
-	
-	
-// AbilityState Section
-protected:
-	UPROPERTY()
+
 	EAbilityState AbilityState;
-	
-	void SetAbilityState(EAbilityState InAbilityState);
 
-
-// With AbilityManagerComponent Section
-protected:
-	virtual void OtherAbilityStart(EAbilityType OtherAbilityType);
-	virtual void OtherAbilityEnd(EAbilityType OtherAbilityType);
-
-	
-// Reference Caching Section
-protected:
 	UPROPERTY()
 	TObjectPtr<AOWCharacterPlayable> CharacterPlayable;
 
-
-// Montage Section	
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_Montage, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> AbilityMontage;
 
-	void PlayAbilityMontage(UAnimMontage* InAbilityMontage);
-	void PlayAbilityMontage_JumpToSection(UAnimMontage* InAbilityMontage, FName InSectionName);
-	void StopAbilityMontage(float InBlendOutTime);
-
-	
-// 	Delegate Section
 public:
 	FOnAbilityCooldownTimeChanged OnAbilityCooldownTimeChanged;
 	FOnAbilityStateChanged OnAbilityStateChanged;
-
-// InitWidget
-	void InitWidget();
 };
 

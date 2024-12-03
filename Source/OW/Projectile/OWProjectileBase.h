@@ -22,32 +22,21 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	
-// For ObjectPooling	
 public:
 	void ActivateProjectile(const FVector& StartLocation, const FVector& Direction);
 	void DeactivateProjectile();
 
-// Change CollisionProfile
 	void SetCollisionProfile(FName InCollisionProfileName);
 
-
-// Apply Damage	
-private:
+protected:
 	UFUNCTION()
 	void OnSphereHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-
-// SetLifeSpan
 	void LifeSpanTimerStart();
 	void LifeSpanTimerEnd();
 
-	UPROPERTY()
 	FTimerHandle LifeSpanTimerHandle;
 
-	
-// Projectile Property	
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = ProjectileBase, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 

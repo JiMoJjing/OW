@@ -19,7 +19,7 @@ class OW_API UQuickMeleeComponent : public UActorComponent
 
 public:
 	UQuickMeleeComponent();
-
+	
 	virtual void InitializeComponent() override;
 
 protected:
@@ -30,53 +30,44 @@ public:
 
 protected:
 	bool CheckAvailable();
+	void PlayQuickMeleeMontage(float InPlayRate);
 
-// Chaching	
+	UFUNCTION()
+	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
+
+	void DelayStart(float InDelayTime);
+	void DelayEnd();
+
+	UFUNCTION()
+	void OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	void QuickMeleeBegin();
+	void QuickMeleeEnd();
+
 	UPROPERTY()
 	TObjectPtr<AOWCharacterPlayable> CharacterPlayable;
 
 	UPROPERTY()
 	TScriptInterface<IOWTriggerAnimNotifyInterface> TriggerAnimNotifyInterface;
 
-// Montage	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = QuickMelee, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> QuickMeleeMontage;
 
-	void PlayQuickMeleeMontage(float InPlayRate);
-
-	UFUNCTION()
-	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
-
-// Delay
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = QuickMelee, meta = (AllowPrivateAccess = "true"))
 	float DelayTime;
 
-	UPROPERTY()
 	FTimerHandle DelayTimerHandle;
 	
-	UPROPERTY()
 	uint8 bDelayActive : 1;
 
-	void DelayStart(float InDelayTime);
-	void DelayEnd();
-
-// Collision
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = QuickMelee, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> QuickMeleeBoxComponent;
 
-	UFUNCTION()
-	void OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 	TArray<TObjectPtr<AActor>> OverlappedActors;
 
-	void QuickMeleeBegin();
-	void QuickMeleeEnd();
-
-// Damage	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = QuickMelee, meta = (AllowPrivateAccess = "true"))
 	float QuickMeleeDamage;
-	
-// Niagara
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = QuickMelee, meta = (AllowPrivateAccess = true))
 	TObjectPtr<UNiagaraSystem> QuickMeleeEffect;
 };

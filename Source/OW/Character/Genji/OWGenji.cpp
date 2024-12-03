@@ -47,16 +47,14 @@ AOWGenji::AOWGenji()
 
 // For CharacterPlayable	
 	BasicWeaponComponent = GenjiShurikenComponent;
-	
-		
-// Collision Profile Setting 임시
-	GetCapsuleComponent()->SetCollisionProfileName(OWTEAM1CAPSULE);
-	SetMeshCollisionProfileName(OWTEAM1MESH);
 }
 
 void AOWGenji::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
+	GetCapsuleComponent()->SetCollisionProfileName(OWTEAM1CAPSULE);
+	SetMeshCollisionProfileName(OWTEAM1MESH);
 }
 
 void AOWGenji::BeginPlay()
@@ -68,7 +66,7 @@ void AOWGenji::PrimaryFire()
 {
 	if(bUltimateActive && GenjiDragonbladeComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Dragonblade Slash!"));
+		GenjiDragonbladeComponent->DragonbladeSlash();
 		return;
 	}
 	
@@ -82,7 +80,7 @@ void AOWGenji::SecondaryFire()
 {
 	if(bUltimateActive && GenjiDragonbladeComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Dragonblade Slash!"));
+		GenjiDragonbladeComponent->DragonbladeSlash();
 		return;
 	}
 	
@@ -120,7 +118,7 @@ void AOWGenji::QuickMelee()
 {
 	if(bUltimateActive && GenjiDragonbladeComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Dragonblade Slash!"));
+		GenjiDragonbladeComponent->DragonbladeSlash();
 		return;
 	}
 	
@@ -153,7 +151,11 @@ void AOWGenji::InitWidget()
 
 void AOWGenji::KillSuccess()
 {
-	//ToDo : 질풍참 초기화
+	SwiftStrikeReset();
+}
+
+void AOWGenji::SwiftStrikeReset()
+{
 	if(GenjiSwiftStrikeComponent)
 	{
 		GenjiSwiftStrikeComponent->SwiftStrikeCooldownReset();

@@ -29,13 +29,29 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
 	virtual void OnPossess(APawn* InPawn) override;
 
 public:
 	virtual void SetupInputComponent() override;
 
 // Input Section
+protected:
+	void Move(const FInputActionValue& Value);
+	void Look(const FInputActionValue& Value);
+	void Jump();
+
+	void PrimaryFire();
+	void SecondaryFire();
+	void AbilityOne();
+	void AbilityTwo();
+	void AbilityThree();
+	void Reload();
+	void QuickMelee();
+
+public:
+	virtual void ApplyDamageSuccess(float Damage, bool bIsHeadShot) override;
+	virtual void KillSuccess() override;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;
@@ -70,19 +86,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> QuickMeleeAction;
 
-	void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
-	void Jump();
-
-	void PrimaryFire();
-	void SecondaryFire();
-	void AbilityOne();
-	void AbilityTwo();
-	void AbilityThree();
-	void Reload();
-	void QuickMelee();
-
-// Interface Reference	
 	UPROPERTY()
 	TScriptInterface<IOWCharacterInputInterface> CharacterInputInterface;
 
@@ -91,20 +94,10 @@ protected:
 
 	UPROPERTY()
 	TScriptInterface<IOWApplyDamageInterface> HUDApplyDamageInterface;
-	
-// IOWApplyDamageInterface
-public:
-	virtual void ApplyDamageSuccess(float Damage, bool bIsHeadShot) override;
-	virtual void KillSuccess() override;
 
-
-
-// HUD	
-private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = HUD, meta = (AllowPrivateAccess = "ture"))
 	TSubclassOf<UUserWidget> OWHUDClass;
 
 	UPROPERTY()
 	TObjectPtr<UOWHUD> OWHUD;
-
 };

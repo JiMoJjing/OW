@@ -9,13 +9,14 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "OW/Character/OWCharacterPlayable.h"
+#include "OW/Character/Genji/OWGenji.h"
 
 #include "OW/Collision/OWCollisionProfile.h"
 
 
 UGenjiSwiftStrikeComponent::UGenjiSwiftStrikeComponent() : SwiftStrikeDistance(1884.f), SwiftStrikeSpeed(5000.f), SwiftStrikeStartLocation(FVector::ZeroVector),
 SwiftStrikeEndLocation(FVector::ZeroVector), SwiftStrikeHitNormalProjection(FVector::ZeroVector), HitNormalProjectionInterpSpeed(10.f), bCheckDoubleJump(false),
-bSwiftStrikeCooldownReset(false), CapsuleSize2D(0.f, 0.f), SwiftStrikeDamage(50.f)
+bSwiftStrikeCooldownReset(false), CapsuleSize2D(0.f, 0.f), SwiftStrikeDamage(50.f), DragonbladeStartSectionName(TEXT("Section_03")), DragonbladeEndSectionName(TEXT("Section_04"))
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
@@ -55,6 +56,10 @@ void UGenjiSwiftStrikeComponent::InitializeComponent()
 	{
 		SwiftStrikeCollider->AttachToComponent(CharacterPlayable->GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	}
+	if(AOWGenji* Genji = Cast<AOWGenji>(GetOwner()))
+	{
+		GenjiRef = Genji;
+	}
 }
 
 void UGenjiSwiftStrikeComponent::BeginPlay()
@@ -73,7 +78,14 @@ void UGenjiSwiftStrikeComponent::AbilityStart()
 
 	SwiftStrikeStartSetting();
 
-	PlayAbilityMontage(AbilityMontage);
+	if(GenjiRef->IsUltimateActive())
+	{
+		PlayAbilityMontage_JumpToSection(AbilityMontage, DragonbladeStartSectionName);
+	}
+	else
+	{
+		PlayAbilityMontage(AbilityMontage);
+	}
 }
 
 void UGenjiSwiftStrikeComponent::AbilityEnd()
@@ -141,7 +153,15 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeEndSetting()
 	SwiftStrikeHitNormalProjection = FVector::ZeroVector;
 
 	AbilityMontage->bEnableAutoBlendOut = true;
-	PlayAbilityMontage_JumpToSection(AbilityMontage, TEXT("Section_02"));
+
+	if(GenjiRef->IsUltimateActive())
+	{
+		PlayAbilityMontage_JumpToSection(AbilityMontage, DragonbladeEndSectionName);
+	}
+	else
+	{
+		PlayAbilityMontage_JumpToSection(AbilityMontage, TEXT("Section_02"));
+	}
 }
 
 void UGenjiSwiftStrikeComponent::SetSwiftStrikeStartLocation()
@@ -206,12 +226,6 @@ void UGenjiSwiftStrikeComponent::OnCapsuleComponentHit(UPrimitiveComponent* HitC
 	}
 }
 
-void UGenjiSwiftStrikeComponent::SwiftStrikeCooldownReset()
-{
-	bSwiftStrikeCooldownReset = true;
-	CooldownEnd();
-}
-
 void UGenjiSwiftStrikeComponent::OnSwiftStrikeColliderBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if(AOWCharacterBase* CharacterBase = Cast<AOWCharacterBase>(OtherComp->GetOwner()))
@@ -226,4 +240,10 @@ void UGenjiSwiftStrikeComponent::OnSwiftStrikeColliderBeginOverlap(UPrimitiveCom
 		const FVector EffectLocation = OtherComp->GetComponentLocation();
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(OtherComp, SwiftStrikeHitEffect, EffectLocation, FRotator::ZeroRotator);
 	}
+}
+
+void UGenjiSwiftStrikeComponent::SwiftStrikeCooldownReset()
+{
+	bSwiftStrikeCooldownReset = true;
+	CooldownEnd();
 }

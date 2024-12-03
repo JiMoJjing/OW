@@ -25,7 +25,18 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	virtual void PrimaryFire() override;
+	virtual void SecondaryFire() override;
+	virtual void AbilityOne() override;
+	virtual void AbilityTwo() override;
+	virtual void AbilityThree() override;
+	virtual void QuickMelee() override;
+	virtual void Reload() override;
 	virtual void KillSuccess() override;
+	virtual void InitWidget() override;
+	void SwiftStrikeReset();
+
+	TObjectPtr<UGenjiDragonbladeComponent> GetDragonbladeComponent() { return GenjiDragonbladeComponent; }
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Genji, meta = (AllowPrivateAccess = true))
@@ -40,15 +51,4 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Genji, meta = (AllowPrivateAccess = true))
 	TObjectPtr<UGenjiDragonbladeComponent> GenjiDragonbladeComponent;
 
-// IOWCharacterInputInterface
-public:
-	virtual void PrimaryFire() override;
-	virtual void SecondaryFire() override;
-	virtual void AbilityOne() override;
-	virtual void AbilityTwo() override;
-	virtual void AbilityThree() override;
-	virtual void QuickMelee() override;
-	virtual void Reload() override;
-
-	virtual void InitWidget() override;
 };

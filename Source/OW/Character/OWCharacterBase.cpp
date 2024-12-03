@@ -10,7 +10,7 @@
 #include "OW/Interface/OWApplyDamageInterface.h"
 #include "OW/Status/HPComponent.h"
 
-AOWCharacterBase::AOWCharacterBase()
+AOWCharacterBase::AOWCharacterBase() : DefaultMaxWalkSpeed(600.f)
 {
 	// Pawn
 	bUseControllerRotationPitch = false;
@@ -27,8 +27,8 @@ AOWCharacterBase::AOWCharacterBase()
 	GetCharacterMovement()->JumpZVelocity = 400.f;
 	GetCharacterMovement()->GravityScale = 0.75f;
 	GetCharacterMovement()->AirControl = 1.f;
-	GetCharacterMovement()->MaxWalkSpeed = 600.f;
-	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
+	GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed;
+	GetCharacterMovement()->MinAnalogWalkSpeed = 10.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->MaxAcceleration = 2048.f;
 
@@ -68,14 +68,14 @@ AOWCharacterBase::AOWCharacterBase()
 	HeadCollision->SetRelativeLocation(FVector(0.f, -15.f, 0.f));
 	HeadCollision->SetCapsuleRadius(12.f);
 	HeadCollision->SetCapsuleHalfHeight(12.f);
-
-	CollisionArray.AddUnique(BodyCollision);
-	CollisionArray.AddUnique(HeadCollision);
 }
 
 void AOWCharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	
+	CollisionArray.AddUnique(BodyCollision);
+	CollisionArray.AddUnique(HeadCollision);
 }
 
 void AOWCharacterBase::BeginPlay()
@@ -162,7 +162,7 @@ void AOWCharacterBase::CharacterRevive()
 }
 
 void AOWCharacterBase::SetMeshCollisionEnabled(ECollisionEnabled::Type InType)
-{ 
+{
 	for(auto& Collision : CollisionArray)
 	{
 		Collision->SetCollisionEnabled(InType);
@@ -175,4 +175,14 @@ void AOWCharacterBase::SetMeshCollisionProfileName(FName InCollisionProfileName)
 	{
 		Collision->SetCollisionProfileName(InCollisionProfileName);
 	}
+}
+
+void AOWCharacterBase::SetMaxWalkSpeedByMultiplier(float InMultiplier)
+{
+	GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed * InMultiplier;
+}
+
+void AOWCharacterBase::SetMaxWalkSpeedToDefault()
+{
+	GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed;
 }

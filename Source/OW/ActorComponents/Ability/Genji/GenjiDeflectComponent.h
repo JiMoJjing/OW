@@ -7,6 +7,7 @@
 #include "GenjiDeflectComponent.generated.h"
 
 
+class AOWGenji;
 class IOWPlayerTraceInterface;
 class UBoxComponent;
 
@@ -17,7 +18,6 @@ class OW_API UGenjiDeflectComponent : public UAbilityComponent
 
 public:
 	UGenjiDeflectComponent();
-
 	virtual void InitializeComponent() override;
 
 protected:
@@ -34,30 +34,26 @@ private:
 
 	void GetDeflectDirection(const FVector& InStartLocation, FVector& InDirectionVector);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Deflect, meta = (AllowPrivateAccess = "true"))
-	float DurationTime;
-
-	FTimerHandle DurationTimerHandle;
-
 	void DurationStart();
 	void DurationEnd();
-	
-	UPROPERTY()
-	uint8 DeflectMontageSectionIndex;
-
-	UPROPERTY()
-	TMap<uint8, FName> DeflectMontageSection;
-
-// Caching
-	UPROPERTY()
-	TScriptInterface<IOWPlayerTraceInterface> PlayerTraceInterface;
-
-
-// Overlap Component
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Deflect, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UBoxComponent> DeflectBoxComponent;
 
 	UFUNCTION()
 	void OnDeflectBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UPROPERTY()
+	TObjectPtr<AOWGenji> GenjiRef;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_Deflect, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UBoxComponent> DeflectBoxComponent;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability_Deflect, meta = (AllowPrivateAccess = "true"))
+	float DurationTime;
+
+	UPROPERTY()
+	TScriptInterface<IOWPlayerTraceInterface> PlayerTraceInterface;
+
+	FTimerHandle DurationTimerHandle;
+
+	TMap<uint8, FName> DeflectMontageSection;
+	uint8 DeflectMontageSectionIndex;
 };

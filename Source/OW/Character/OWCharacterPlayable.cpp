@@ -96,8 +96,13 @@ AOWCharacterPlayable::AOWCharacterPlayable() : bQuickMeleeActive(false), Current
 	FootRCollision->SetRelativeLocation(FVector(-8.f, 0.f, -8.f));
 	FootRCollision->SetCapsuleRadius(6.f);
 	FootRCollision->SetCapsuleHalfHeight(16.f);
+}
 
-// Add to CollisionArray
+void AOWCharacterPlayable::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	
+	// Add to CollisionArray
 	CollisionArray.AddUnique(UpperArmLCollision);
 	CollisionArray.AddUnique(LowerArmLCollision);
 	
@@ -111,12 +116,6 @@ AOWCharacterPlayable::AOWCharacterPlayable() : bQuickMeleeActive(false), Current
 	CollisionArray.AddUnique(ThighRCollision);
 	CollisionArray.AddUnique(CalfRCollision);
 	CollisionArray.AddUnique(FootRCollision);
-}
-
-void AOWCharacterPlayable::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
 }
 
 void AOWCharacterPlayable::BeginPlay()
