@@ -81,6 +81,9 @@ void AOWCharacterBase::PostInitializeComponents()
 void AOWCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GameStartLocation = GetActorLocation();
+	GameStartRotation = GetActorRotation();
 }
 
 float AOWCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -148,6 +151,9 @@ void AOWCharacterBase::CharacterDeath()
 void AOWCharacterBase::CharacterRevive()
 {
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	
+	SetActorLocation(GameStartLocation);
+	SetActorRotation(GameStartRotation);
 	
 	GetMesh()->SetSimulatePhysics(false);
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));

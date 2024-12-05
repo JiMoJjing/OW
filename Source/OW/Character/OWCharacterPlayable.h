@@ -20,11 +20,6 @@ class UCameraComponent;
 class USpringArmComponent;
 
 
-DECLARE_MULTICAST_DELEGATE(FOnAnimNotify);
-DECLARE_MULTICAST_DELEGATE(FOnAnimNotifyBegin);
-DECLARE_MULTICAST_DELEGATE(FOnAnimNotifyEnd);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnAnimNotifyState, float /* DeltaTime */);
-
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityStart, EAbilityType /* InAbilityType */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityEnd, EAbilityType /* InAbilityType */);
 

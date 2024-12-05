@@ -57,4 +57,7 @@ protected:
 	float DefaultMaxWalkSpeed;
 	
 	TArray<TObjectPtr<UShapeComponent>> CollisionArray;
+
+	FVector GameStartLocation;
+	FRotator GameStartRotation;
 };
