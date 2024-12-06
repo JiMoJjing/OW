@@ -23,6 +23,8 @@ public:
 
 	void UseAltFire(float InPlayRate);
 
+	void OnDragonbladeStart();
+
 private:
 	void AltFire();
 	void PlayAltFireMontage(float InPlayRate);

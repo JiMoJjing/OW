@@ -91,17 +91,17 @@ void UGenjiSwiftStrikeComponent::AbilityStart()
 void UGenjiSwiftStrikeComponent::AbilityEnd()
 {
 	Super::AbilityEnd();
-
 	SwiftStrikeEndSetting();
+	CooldownStart();
 	
 	if(bSwiftStrikeCooldownReset)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("bSwiftSTrikeCooldownReset = True"));
 		bSwiftStrikeCooldownReset = false;
-		return;
+		CooldownEnd();
 	}
-	
-	CooldownStart();
 }
+
 
 void UGenjiSwiftStrikeComponent::SwiftStrikeStartSetting()
 {	
@@ -134,11 +134,11 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeEndSetting()
 	CharacterPlayable->GetCharacterMovement()->MaxAcceleration = 2048.f;
 	CharacterPlayable->GetCharacterMovement()->StopMovementImmediately();
 	CharacterPlayable->SetIgnoreInput(false);
-	CharacterPlayable->OnAnimNotifyState.RemoveAll(this);
-	CharacterPlayable->OnAnimNotifyEnd.RemoveAll(this);
 	CharacterPlayable->GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel3, ECR_Block);
 	CharacterPlayable->GetCapsuleComponent()->OnComponentHit.RemoveAll(this);
-
+	CharacterPlayable->OnAnimNotifyState.RemoveAll(this);
+	CharacterPlayable->OnAnimNotifyEnd.RemoveAll(this);
+	
 	SwiftStrikeCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	if(bCheckDoubleJump)
@@ -162,6 +162,7 @@ void UGenjiSwiftStrikeComponent::SwiftStrikeEndSetting()
 	{
 		PlayAbilityMontage_JumpToSection(AbilityMontage, TEXT("Section_02"));
 	}
+	
 }
 
 void UGenjiSwiftStrikeComponent::SetSwiftStrikeStartLocation()
@@ -244,6 +245,12 @@ void UGenjiSwiftStrikeComponent::OnSwiftStrikeColliderBeginOverlap(UPrimitiveCom
 
 void UGenjiSwiftStrikeComponent::SwiftStrikeCooldownReset()
 {
-	bSwiftStrikeCooldownReset = true;
-	CooldownEnd();
+	if(AbilityState == EAbilityState::EAS_Active)
+	{
+		bSwiftStrikeCooldownReset = true;
+	}
+	else
+	{
+		CooldownEnd();
+	}
 }

@@ -8,29 +8,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3aefe1f1-9d81-44f8-bffd-5d205ac350f6" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/OW/AI/BTDecorator_AttackInRange.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/AI/BTDecorator_AttackInRange.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/AI/BTService_Detect.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/AI/BTService_Detect.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/AI/BTTask_AIAttack.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/AI/BTTask_AIAttack.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/AI/BTTask_TurnToStartDirection.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/AI/BTTask_TurnToStartDirection.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/AI/BTTask_TurnToTarget.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/AI/BTTask_TurnToTarget.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/AI/OWAIBBKey.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/Interface/OWAICharacterInterface.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/OW/Interface/OWAICharacterInterface.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.OW.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.OW.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/OW/AI/OWAIController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/AI/OWAIController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/OW/Character/OWCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Character/OWCharacterBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/OW/Character/OWCharacterBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Character/OWCharacterBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/ActorComponents/Ability/AbilityComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/ActorComponents/Ability/AbilityComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/ActorComponents/Ability/AbilityComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/ActorComponents/Ability/AbilityComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/ActorComponents/Ability/Genji/GenjiSwiftStrikeComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/ActorComponents/Ability/Genji/GenjiSwiftStrikeComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/ActorComponents/BasicAttack/Genji/GenjiShurikenComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/ActorComponents/BasicAttack/Genji/GenjiShurikenComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/ActorComponents/BasicAttack/Genji/GenjiShurikenComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/ActorComponents/BasicAttack/Genji/GenjiShurikenComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/ActorComponents/Ultimate/Genji/GenjiDragonbladeComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/ActorComponents/Ultimate/Genji/GenjiDragonbladeComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/Animation/AnimInstance/GenjiAnimInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Animation/AnimInstance/GenjiAnimInstance.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/Animation/AnimInstance/GenjiAnimInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Animation/AnimInstance/GenjiAnimInstance.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/Animation/AnimInstance/OWAnimInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Animation/AnimInstance/OWAnimInstance.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/Character/Genji/OWGenji.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Character/Genji/OWGenji.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/Character/Genji/OWGenji.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Character/Genji/OWGenji.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/Character/OWCharacterPlayable.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Character/OWCharacterPlayable.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/OW/Character/OWCharacterPlayable.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Character/OWCharacterPlayable.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/OW/Character/StandardBot/OWStandardBot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Character/StandardBot/OWStandardBot.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/OW/Character/StandardBot/OWStandardBot.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Character/StandardBot/OWStandardBot.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/OW/Interface/OWTriggerAnimNotifyInterface.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Interface/OWTriggerAnimNotifyInterface.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/OW/OW.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/OW.Build.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/Interface/OWCharacterInputInterface.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/Interface/OWCharacterInputInterface.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/PlayerController/OWPlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/PlayerController/OWPlayerController.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/OW/PlayerController/OWPlayerController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/OW/PlayerController/OWPlayerController.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -198,7 +193,8 @@
       <workItem from="1733208227185" duration="8911000" />
       <workItem from="1733231322503" duration="14054000" />
       <workItem from="1733297104514" duration="29593000" />
-      <workItem from="1733382242853" duration="13785000" />
+      <workItem from="1733382242853" duration="15462000" />
+      <workItem from="1733459164072" duration="37181000" />
     </task>
     <task id="LOCAL-00001" summary="- PlayerController&#10;OWPlayerController&#10;&#10;- Character&#10;OWCharacterBase&#10;OWCharacterPlayable&#10;OWGenji&#10;OWStandardBot&#10;&#10;- AnimInstance&#10;OWAnimInstance&#10;&#10;- Interface&#10;OWApplyDamageInterface&#10;OWCharacterInputInterface&#10;OWPlayerTraceInterface">
       <option name="closed" value="true" />
@@ -280,7 +276,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733242462524</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Feat : AI&#10;OWAIController 와 비헤이비어 트리에 사용 할 데코레이터, 태스크, 서비스 등 생성&#10;AI 캐릭터 용 인터페이스도 추가">
+      <option name="closed" value="true" />
+      <created>1733415520723</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1733415520723</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -311,6 +315,7 @@
     <MESSAGE value="Remove : AbilityManagerComponent&#10;기능을 OWCharacterPlayable로 이동&#10;&#10;Remove : GenjiQuickMeleeComponent&#10;QuickMelee를 AbilityComponent 에서 분리, 새로 생성해서 해당 클래스는 삭제&#10;&#10;Refactor : AbilityType&#10;UENUM 에서 PrimaryFire, SecondaryFire, QuickMelee, Reload 제거&#10;&#10;Feat : OWProjectileBase&#10;SetCollisionProfile 함수 추가&#10;&#10;Refactor : OWCharacterBase, OWCharacterPlayable&#10;피직스 애셋 대신할 캡슐 콜리전 생성 및 초기화 위치 수정&#10;&#10;Refactor : OWCharacterPlayable&#10;AbilityManagerComponent의 기능 이관&#10;QuickMelee 활성, 비활성 추가&#10;&#10;Feat : QuickMeleeComponent&#10;근접공격용 ActorComponent 추가&#10;&#10;Feat : GenjiDeflectComponent&#10;튕겨내기 AbilityComponent 추가" />
     <MESSAGE value="Feat : OWCharacterPlayable&#10;OWCharacterPlayable에 궁극기 관련 기능 추가&#10;&#10;Feat : UltimateGaugeWidget&#10;궁극기 게이지 나타낼 위젯 추가&#10;OWHUD에도 추가&#10;&#10;Feat : CancelKeyWidget&#10;튕겨내기 사용시 취소 키 안내 위젯 생성&#10;&#10;Feat : UltimateAbilityBaseComponent&#10;궁극기 베이스 액터컴포넌트 생성&#10;&#10;Feat : GenjiDragonbladeComponent&#10;겐지 용검 액터컴포넌트로 구현" />
     <MESSAGE value="Feat : GenjiAnimInstance&#10;Genji AnimInstance 추가&#10;&#10;Feat : ABP_Genji&#10;Linked AnimGraph를 이용한 Normal 애니메이션과 Dragonblade 애니메이션 구분&#10;&#10;Refactor : Function, Variable&#10;함수선언과 변수 선언 위치 정리" />
-    <option name="LAST_COMMIT_MESSAGE" value="Feat : GenjiAnimInstance&#10;Genji AnimInstance 추가&#10;&#10;Feat : ABP_Genji&#10;Linked AnimGraph를 이용한 Normal 애니메이션과 Dragonblade 애니메이션 구분&#10;&#10;Refactor : Function, Variable&#10;함수선언과 변수 선언 위치 정리" />
+    <MESSAGE value="Feat : AI&#10;OWAIController 와 비헤이비어 트리에 사용 할 데코레이터, 태스크, 서비스 등 생성&#10;AI 캐릭터 용 인터페이스도 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="Feat : AI&#10;OWAIController 와 비헤이비어 트리에 사용 할 데코레이터, 태스크, 서비스 등 생성&#10;AI 캐릭터 용 인터페이스도 추가" />
   </component>
 </project>

@@ -58,8 +58,19 @@ void UGenjiDragonbladeComponent::BeginPlay()
 void UGenjiDragonbladeComponent::StartUltimate()
 {
 	Super::StartUltimate();
-	CharacterPlayable->OnAnimNotifyEnd.AddUObject(this, &UGenjiDragonbladeComponent::EndUltimate);
+	
 	PlayUltimateMontage(UltimateMontage);
+	if(UAnimInstance* AnimInstance = GenjiRef->GetMesh()->GetAnimInstance())
+	{
+		FOnMontageEnded MontageEnded;
+		MontageEnded.BindLambda(
+			[&](UAnimMontage* Montage, bool bInterrupted)
+			{
+				EndUltimate();
+			});
+		AnimInstance->Montage_SetEndDelegate(MontageEnded, UltimateMontage);
+	}
+	GenjiRef->DragonMontageStart();
 }
 
 void UGenjiDragonbladeComponent::EndUltimate()
@@ -71,7 +82,7 @@ void UGenjiDragonbladeComponent::EndUltimate()
 
 void UGenjiDragonbladeComponent::DragonbladeDurationStart()
 {
-	GenjiRef->SwiftStrikeReset();
+	GenjiRef->OnDragonbladeStart();
 	CharacterPlayable->GetWorldTimerManager().SetTimer(DragonbladeDurationTimerHandle, this, &UGenjiDragonbladeComponent::DragonbladeDurationEnd, DragonbladeDuration, false);
 	CharacterPlayable->SetMaxWalkSpeedByMultiplier(1.3f);
 }
@@ -100,10 +111,18 @@ void UGenjiDragonbladeComponent::DragonbladeDurationDelayEnd(UAnimMontage* Monta
 	}
 
 	CharacterPlayable->SetUltimateActive(false);
-	CharacterPlayable->OnAnimNotifyEnd.AddUObject(this, &UGenjiDragonbladeComponent::DragonbladeToNormal);
 	CharacterPlayable->AbilityStart(EAbilityType::EAT_AbilityThree);
 	CharacterPlayable->SetMaxWalkSpeedToDefault();
+	//CharacterPlayable->OnAnimNotifyEnd.AddUObject(this, &UGenjiDragonbladeComponent::DragonbladeToNormal);
 	PlayUltimateMontage(DragonbladeToNormalMontage);
+
+	FOnMontageEnded MontageEnded;
+	MontageEnded.BindLambda(
+	[&](UAnimMontage* InMontage, bool bEnded)
+	{
+		DragonbladeToNormal();
+	});
+	AnimInstance->Montage_SetEndDelegate(MontageEnded, DragonbladeToNormalMontage);
 }
 
 void UGenjiDragonbladeComponent::DragonbladeToNormal()

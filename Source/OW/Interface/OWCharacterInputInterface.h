@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "OWCharacterInputInterface.generated.h"
 
+struct FInputActionValue;
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UOWCharacterInputInterface : public UInterface
@@ -29,4 +30,9 @@ public:
 	virtual void AbilityThree() = 0;
 	virtual void Reload() = 0;
 	virtual void QuickMelee() = 0;
+
+	virtual void Move(const FInputActionValue& Value) = 0;
+	virtual void MoveReleased() = 0;
+	virtual void JumpPressed() = 0;
+	virtual void JumpReleased() = 0;
 };

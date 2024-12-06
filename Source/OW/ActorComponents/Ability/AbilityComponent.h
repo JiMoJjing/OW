@@ -65,7 +65,7 @@ protected:
 	virtual void AbilityStart();
 	virtual void AbilityEnd();
 	
-	void CooldownStart();
+	virtual void CooldownStart();
 	virtual void CooldownEnd();
 	void CooldownTick();
 	

@@ -6,7 +6,7 @@
 #include "OW/ActorComponents/Ultimate/Genji/GenjiDragonbladeComponent.h"
 #include "OW/Character/Genji/OWGenji.h"
 
-UGenjiAnimInstance::UGenjiAnimInstance() : bDragonbladeActive(false)
+UGenjiAnimInstance::UGenjiAnimInstance() : bDragonbladeActive(false), bIsClimbWall(false)
 {
 }
 
@@ -27,5 +27,6 @@ void UGenjiAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if(GenjiRef)
 	{
 		bDragonbladeActive = GenjiRef->IsUltimateActive();
+		bIsClimbWall = GenjiRef->GetIsClimbWall();
 	}
 }

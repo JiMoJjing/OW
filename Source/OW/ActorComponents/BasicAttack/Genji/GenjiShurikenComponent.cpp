@@ -70,6 +70,11 @@ void UGenjiShurikenComponent::UseAltFire(float InPlayRate)
 	}
 }
 
+void UGenjiShurikenComponent::OnDragonbladeStart()
+{
+	Reload();
+}
+
 void UGenjiShurikenComponent::AltFire()
 {
 	if(CheckAmmo() == false)

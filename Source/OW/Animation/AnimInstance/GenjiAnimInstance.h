@@ -28,4 +28,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character")
 	uint8 bDragonbladeActive : 1;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character")
+	uint8 bIsClimbWall : 1;
 };

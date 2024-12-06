@@ -37,6 +37,7 @@ void UOWAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		//const FRotator ControlRotation = OwnerCharacter->GetControlRotation();
 		const FRotator ActorRotation = OwnerCharacter->GetActorRotation();
+		const FVector LastInputVec = MovementComponent->GetLastInputVector();
 		
 		Velocity = MovementComponent->Velocity;
 		GroundSpeed = Velocity.Size2D();
@@ -45,13 +46,23 @@ void UOWAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsJumping = bIsFalling & (Velocity.Z > JumpingThreshold);
 		JumpCurrentCount = OwnerCharacter->JumpCurrentCount;
 		bIsMontagePlaying = IsAnyMontagePlaying();
-		if(bIsIdle)
-		{
-			MoveDirection = 0.f;
-		}
-		else
-		{
-			MoveDirection = UKismetAnimationLibrary::CalculateDirection(Velocity, ActorRotation);
-		}
+
+		// FString str = FString::Printf(TEXT("%f"), GroundSpeed);
+		// GEngine->AddOnScreenDebugMessage(6, 0.02f, FColor::Yellow, str);
+		// if(bIsIdle)
+		// {
+		// 	MoveDirection = 0.f;
+		// }
+		// else if (GroundSpeed < 100.f)
+		// {
+		// 	MoveDirection = UKismetAnimationLibrary::CalculateDirection(LastInputVec, ActorRotation);
+		// }
+		// else
+		// {
+		// 	MoveDirection = UKismetAnimationLibrary::CalculateDirection(Velocity, ActorRotation);
+		// 	FString str2 = FString::Printf(TEXT("%f"), MoveDirection);
+		// 	GEngine->AddOnScreenDebugMessage(5, 0.02f, FColor::Yellow, str2);
+		// }
+		MoveDirection = UKismetAnimationLibrary::CalculateDirection(LastInputVec, ActorRotation);
 	}
 }

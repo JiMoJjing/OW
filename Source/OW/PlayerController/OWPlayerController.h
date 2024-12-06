@@ -37,8 +37,12 @@ public:
 // Input Section
 protected:
 	void Move(const FInputActionValue& Value);
+	void MoveReleased();
 	void Look(const FInputActionValue& Value);
 	void Jump();
+
+	void OnJumpPressed();
+	void OnJumpReleased();
 
 	void PrimaryFire();
 	void SecondaryFire();

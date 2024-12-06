@@ -32,11 +32,24 @@ public:
 	virtual void AbilityThree() override;
 	virtual void QuickMelee() override;
 	virtual void Reload() override;
+	virtual void Move(const FInputActionValue& Value) override;
+	virtual void MoveReleased() override;
+	virtual void JumpPressed() override;
+	virtual void JumpReleased() override;
 	virtual void KillSuccess() override;
 	virtual void InitWidget() override;
-	void SwiftStrikeReset();
+	void OnDragonbladeStart();
+	void DragonMontageStart();
 
 	TObjectPtr<UGenjiDragonbladeComponent> GetDragonbladeComponent() { return GenjiDragonbladeComponent; }
+
+	bool GetIsClimbWall() const { return bIsClimbWall; }
+
+private:
+	void ClimbWallStart(FVector& HitNormal);
+	void ClimbWallEnd();
+	void StopClimbing();
+	virtual void Landed(const FHitResult& Hit) override;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Genji, meta = (AllowPrivateAccess = true))
@@ -51,4 +64,19 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Genji, meta = (AllowPrivateAccess = true))
 	TObjectPtr<UGenjiDragonbladeComponent> GenjiDragonbladeComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Genji, meta = (AllowPrivateAccess = true))
+	TObjectPtr<USkeletalMeshComponent> DragonMeshComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Genji, meta = (AllowPrivateAccess = true))
+	TObjectPtr<UAnimMontage> DragonMontage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Genji, meta = (AllowPrivateAccess = true))
+	TObjectPtr<UAnimMontage> ClimbWallMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Genji, meta = (AllowPrivateAccess = true))
+	TObjectPtr<UAnimMontage> ClimbMantleMontage;
+	
+	uint8 bIsClimbWall : 1;
+	uint8 bCanDoubleJump : 1;
+	uint8 bCanClimbWall : 1;
 };

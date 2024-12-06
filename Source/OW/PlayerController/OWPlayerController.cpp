@@ -147,8 +147,11 @@ void AOWPlayerController::SetupInputComponent()
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 	if(EnhancedInputComponent)
 	{
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AOWPlayerController::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AOWPlayerController::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AOWPlayerController::OnJumpPressed);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AOWPlayerController::OnJumpReleased);
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AOWPlayerController::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &AOWPlayerController::MoveReleased);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AOWPlayerController::Look);
 		EnhancedInputComponent->BindAction(PrimaryFireAction, ETriggerEvent::Triggered, this, &AOWPlayerController::PrimaryFire);
 		EnhancedInputComponent->BindAction(SecondaryFireAction, ETriggerEvent::Triggered, this, &AOWPlayerController::SecondaryFire);
@@ -162,18 +165,17 @@ void AOWPlayerController::SetupInputComponent()
 
 void AOWPlayerController::Move(const FInputActionValue& Value)
 {
-	FVector2D InputValue = Value.Get<FVector2D>();
-
-	const FRotator YawRotation = FRotator(0.f, ControlRotation.Yaw, 0.f);
-
-	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-	APawn* ControlledPawn = GetPawn();
-	if(ControlledPawn)
+	if(CharacterInputInterface)
 	{
-		ControlledPawn->AddMovementInput(ForwardDirection, InputValue.X);
-		ControlledPawn->AddMovementInput(RightDirection, InputValue.Y);
+		CharacterInputInterface->Move(Value);
+	}
+}
+
+void AOWPlayerController::MoveReleased()
+{
+	if(CharacterInputInterface)
+	{
+		CharacterInputInterface->MoveReleased();
 	}
 }
 
@@ -187,10 +189,26 @@ void AOWPlayerController::Look(const FInputActionValue& Value)
 
 void AOWPlayerController::Jump()
 {
-	ACharacter* ControlledCharacter = Cast<ACharacter>(GetPawn());
-	if(ControlledCharacter)
+	ACharacter* ControllingCharacter = Cast<ACharacter>(GetPawn());
+	if(ControllingCharacter)
 	{
-		ControlledCharacter->Jump();
+		ControllingCharacter->Jump();
+	}
+}
+
+void AOWPlayerController::OnJumpPressed()
+{
+	if(CharacterInputInterface)
+	{
+		CharacterInputInterface->JumpPressed();
+	}
+}
+
+void AOWPlayerController::OnJumpReleased()
+{
+	if(CharacterInputInterface)
+	{
+		CharacterInputInterface->JumpReleased();
 	}
 }
 

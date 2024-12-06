@@ -152,6 +152,8 @@ protected:
 	uint8 bUltimateActive : 1;
 
 	FTimerHandle AutoAddUltimateGaugeTimerHandle;
+
+	uint8 bIsJumpPressed : 1;
 	
 public:
 	FOnAnimNotify OnAnimNotify;

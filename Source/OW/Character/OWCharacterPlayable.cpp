@@ -9,7 +9,7 @@
 #include "OW/ActorComponents/Ability/AbilityComponent.h"
 #include "OW/Status/HPComponent.h"
 
-AOWCharacterPlayable::AOWCharacterPlayable() : bQuickMeleeActive(false), CurrentAbilityType(EAbilityType::EAT_None), MaxUltimateGauge(2125.f), CurrentUltimateGauge(0.f), bUltimateActive(false)
+AOWCharacterPlayable::AOWCharacterPlayable() : bQuickMeleeActive(false), CurrentAbilityType(EAbilityType::EAT_None), MaxUltimateGauge(2125.f), CurrentUltimateGauge(0.f), bUltimateActive(false), bIsJumpPressed(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -278,6 +278,7 @@ void AOWCharacterPlayable::TriggerAnimNotifyBegin()
 
 void AOWCharacterPlayable::TriggerAnimNotifyEnd()
 {
+	UE_LOG(LogTemp, All, TEXT("End Called"));
 	if(OnAnimNotifyEnd.IsBound())
 	{
 		OnAnimNotifyEnd.Broadcast();

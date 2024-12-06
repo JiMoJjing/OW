@@ -40,17 +40,17 @@ void AOWAIController::RunAI()
 
 void AOWAIController::StopAI()
 {
-	UBehaviorTreeComponent* BTComponent = Cast<UBehaviorTreeComponent>(BrainComponent);
-	if(BTComponent)
-	{
-		BTComponent->StopTree();
-	}
 	UBlackboardComponent* BlackboardPtr = Blackboard.Get();
 	if(UseBlackboard(BBAsset, BlackboardPtr))
 	{
 		const FVector StartPos = BlackboardPtr->GetValueAsVector(BBKEY_STARTPOS);
 		BlackboardPtr->SetValueAsVector(BBKEY_PATROLPOS, StartPos);
 		BlackboardPtr->SetValueAsObject(BBKEY_TARGET, nullptr);
+	}
+	UBehaviorTreeComponent* BTComponent = Cast<UBehaviorTreeComponent>(BrainComponent);
+	if(BTComponent)
+	{
+		BTComponent->StopTree();
 	}
 }
 

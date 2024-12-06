@@ -148,7 +148,7 @@ void UAbilityComponent::PlayAbilityMontage(UAnimMontage* InAbilityMontage)
 void UAbilityComponent::PlayAbilityMontage_JumpToSection(UAnimMontage* InAbilityMontage, FName InSectionName)
 {
 	if(nullptr == InAbilityMontage) return;
-	UE_LOG(LogTemp, Warning, TEXT("Deflect!"));
+
 	UAnimInstance* AnimInstance = CharacterPlayable->GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(InAbilityMontage);
 	AnimInstance->Montage_JumpToSection(InSectionName, InAbilityMontage);
