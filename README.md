@@ -8,5 +8,5 @@
 - **기술 스택**     **:** **UnrealEngine5**
 - **참여 인원**     **:** 1명
 - **핵심 기능**     **:** 실제 게임 분석 및 기술 재현, 기술 상호작용 시스템
-- **Notion 정리       :** https://abrupt-reptile-c68.notion.site/OW-22d8ca612f1e80028f75c9072b87952e
+- **Notion        :** https://abrupt-reptile-c68.notion.site/OW-22d8ca612f1e80028f75c9072b87952e
 </aside>
